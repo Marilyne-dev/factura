@@ -27,6 +27,8 @@ export default function PublicInvoicePage() {
   const [notFound, setNotFound] = useState(false)
   const [generatingPdf, setGeneratingPdf] = useState(false)
   const [pdfError, setPdfError] = useState('')
+  const [paying, setPaying] = useState(false)
+  const [paymentError, setPaymentError] = useState('')
 
   useEffect(() => {
     if (token) load()
@@ -95,6 +97,37 @@ export default function PublicInvoicePage() {
       setPdfError('Impossible de générer le PDF. Réessayez.')
     }
     setGeneratingPdf(false)
+  }
+
+  const handlePayWithMoneroo = async () => {
+    setPaying(true)
+    setPaymentError('')
+
+    try {
+      const redirectUrl = `${window.location.origin}/pay/${token}`
+      const res = await fetch('/api/moneroo/create-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          invoiceNumber: invoice.invoice_number,
+          amount: invoice.total_amount,
+          email: invoice.clients?.email || '',
+          customerName: invoice.clients?.full_name || 'Client',
+          redirectUrl,
+        }),
+      })
+
+      const result = await res.json()
+
+      if (!res.ok || !result.checkoutUrl) {
+        throw new Error(result.error || 'Impossible de démarrer le paiement Moneroo.')
+      }
+
+      window.location.href = result.checkoutUrl
+    } catch (e) {
+      setPaymentError(e.message || 'Erreur au démarrage du paiement.')
+      setPaying(false)
+    }
   }
 
   if (loading) {
@@ -212,9 +245,11 @@ export default function PublicInvoicePage() {
           <div className="pay-section">
             <div className="pay-section-title">Comment payer</div>
 
-            <button className="pay-btn-online" disabled title="Bientôt disponible">
-              💳 Payer en ligne (bientôt disponible)
+            <button className="pay-btn-online" onClick={handlePayWithMoneroo} disabled={paying}>
+              {paying ? 'Initialisation du paiement...' : '💳 Payer en ligne avec Moneroo'}
             </button>
+
+            {paymentError && <div className="pay-error">{paymentError}</div>}
 
             {(company?.bank_details || company?.mobile_money_number) && (
               <div className="pay-manual">
