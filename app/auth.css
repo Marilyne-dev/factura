@@ -1,0 +1,8 @@
+/* Pages connexion et inscription (design bleu nuit et jaune), limitées à .au */
+.au { min-height: 100vh; background: #F7F5EF; color: #0D1B3E; font-family: 'Inter', system-ui, sans-serif; line-height: 1.5; }
+.au a { color: #0D1B3E; }
+.au a:hover { text-decoration: underline; }
+.au a:focus-visible,
+.au input:focus-visible,
+.au button:focus-visible { outline: 3px solid #78B4FF; outline-offset: 2px; box-shadow: 0 0 0 2px #0D1B3E; }
+.au button:disabled { opacity: .65; cursor: not-allowed; }

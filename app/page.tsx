@@ -3,7 +3,7 @@ import './landing.css'
 
 export const metadata = {
   title: 'Factura — Envoyez la facture. On s\'occupe du reste.',
-  description: 'Factura crée vos factures, relance vos clients sur WhatsApp, et vous fait encaisser en Mobile Money.',
+  description: 'Créez, envoyez et suivez vos factures en XOF. Rappels manuels et paiements en ligne selon la configuration du compte.',
 }
 
 export default function Home() {
@@ -37,14 +37,14 @@ export default function Home() {
                 Produit en bêta : nous construisons en public
               </span>
               <h1 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "clamp(40px,5.2vw,68px)", lineHeight: "1.04", letterSpacing: "-0.03em", color: "#ffffff"}}>Envoyez la facture. <span style={{color: "#FFCC00"}}>On s'occupe du reste.</span></h1>
-              <p style={{margin: "0", fontSize: "20px", lineHeight: "1.5", color: "#C9D2EA", maxWidth: "540px"}}>Factura crée vos factures, relance vos clients sur WhatsApp, et vous fait encaisser en Mobile Money.</p>
+              <p style={{margin: "0", fontSize: "20px", lineHeight: "1.5", color: "#C9D2EA", maxWidth: "540px"}}>Créez vos factures en XOF, envoyez-les par e-mail et suivez les paiements depuis un seul espace.</p>
               <div style={{display: "flex", flexWrap: "wrap", gap: "12px"}}>
                 <Link href="/register" style={{display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "10px", height: "48px", padding: "0 26px", borderRadius: "8px", background: "#FFCC00", color: "#0D1B3E", fontWeight: "700", fontSize: "16px", textDecoration: "none"}}>Créer ma première facture
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
                 </Link>
                 <a href="#demo" style={{display: "inline-flex", alignItems: "center", justifyContent: "center", height: "48px", padding: "0 26px", borderRadius: "8px", border: "2px solid #ffffff", color: "#ffffff", fontWeight: "600", fontSize: "16px", textDecoration: "none", boxSizing: "border-box"}}>Voir la démo</a>
               </div>
-              <p style={{margin: "0", fontSize: "14px", color: "#C9D2EA"}}>5 factures gratuites par mois · Sans carte · Annulation à tout moment</p>
+              <p style={{margin: "0", fontSize: "14px", color: "#C9D2EA"}}>Jusqu'à 5 nouvelles factures par mois dans l'offre gratuite.</p>
             </div>
 
             {/* Produit réel : facture, relance, payée */}
@@ -63,7 +63,7 @@ export default function Home() {
                 </div>
                 <div style={{height: "1px", background: "#E3E0D5"}}></div>
                 <div>
-                  <div style={{fontSize: "12px", fontWeight: "700", letterSpacing: "0.06em", textTransform: "uppercase", color: "#4A5575", marginBottom: "12px"}}>Séquence de relance WhatsApp</div>
+                  <div style={{fontSize: "12px", fontWeight: "700", letterSpacing: "0.06em", textTransform: "uppercase", color: "#4A5575", marginBottom: "12px"}}>Suivi de facture · Exemple illustratif</div>
                   <div style={{display: "flex", gap: "8px"}}>
                     <div style={{flex: "1", display: "flex", flexDirection: "column", alignItems: "center", gap: "6px"}}>
                       <span style={{width: "32px", height: "32px", borderRadius: "50%", background: "#0D1B3E", color: "#FFCC00", display: "inline-flex", alignItems: "center", justifyContent: "center"}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"></path></svg></span>
@@ -88,7 +88,7 @@ export default function Home() {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 5h16v11H10l-6 4z"></path></svg>
                     Aperçu du message · J+3
                   </div>
-                  <p style={{margin: "0", fontSize: "15px", lineHeight: "1.5"}}>Bonjour Rose, votre facture FAC-2026-014 de 150 000 XOF est échue depuis 3 jours. Payez en un clic avec Wave ou Orange Money : <span style={{fontWeight: "700", textDecoration: "underline"}}>[lien de paiement]</span></p>
+                  <p style={{margin: "0", fontSize: "15px", lineHeight: "1.5"}}>Un rappel peut être envoyé manuellement depuis la facture. Le paiement en ligne dépend de la configuration du compte.</p>
                 </div>
               </div>
               <div style={{background: "#16295C", border: "1px solid #2F4585", borderRadius: "14px", padding: "16px 20px", display: "flex", alignItems: "center", gap: "14px"}}>
@@ -145,7 +145,7 @@ export default function Home() {
               <div style={{border: "1px solid #2F4585", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
                 <span style={{width: "40px", height: "40px", borderRadius: "50%", background: "#FFCC00", color: "#0D1B3E", display: "inline-flex", alignItems: "center", justifyContent: "center", fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "18px"}}>3</span>
                 <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "24px"}}>Encaissez</h3>
-                <p style={{margin: "0", color: "#C9D2EA", fontSize: "16px"}}>Relances WhatsApp à J+3, J+7, J+14 et J+30, avec un lien de paiement. Arrêt automatique dès que la facture est payée.</p>
+                <p style={{margin: "0", color: "#C9D2EA", fontSize: "16px"}}>Suivez les échéances et envoyez des rappels manuels aux clients.</p>
               </div>
             </div>
           </div>
@@ -166,12 +166,12 @@ export default function Home() {
             <article style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
               <span style={{width: "44px", height: "44px", borderRadius: "10px", background: "#0D1B3E", color: "#FFCC00", display: "inline-flex", alignItems: "center", justifyContent: "center"}}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 5h16v11H10l-6 4z"></path><path d="M8 9.5h8"></path><path d="M8 12.5h5"></path></svg></span>
               <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "20px"}}>Relances WhatsApp</h3>
-              <p style={{margin: "0", color: "#4A5575", fontSize: "16px"}}>Une séquence visible, un aperçu du message avant l'envoi, un journal des relances. Arrêt automatique si payé.</p>
+              <p style={{margin: "0", color: "#4A5575", fontSize: "16px"}}>Préparez un message WhatsApp et ouvrez-le pour l'envoyer vous-même; l'application ne programme pas de relances automatiques.</p>
             </article>
             <article style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
               <span style={{width: "44px", height: "44px", borderRadius: "10px", background: "#0D1B3E", color: "#FFCC00", display: "inline-flex", alignItems: "center", justifyContent: "center"}}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"></rect><path d="M11 18h2"></path></svg></span>
               <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "20px"}}>Lien de paiement</h3>
-              <p style={{margin: "0", color: "#4A5575", fontSize: "16px"}}>Un lien par facture, Mobile Money et carte. Le client paie en un clic, sans créer de compte.</p>
+              <p style={{margin: "0", color: "#4A5575", fontSize: "16px"}}>Proposez un lien de paiement si le prestataire de paiement est configuré sur votre compte.</p>
             </article>
             <article style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
               <span style={{width: "44px", height: "44px", borderRadius: "10px", background: "#0D1B3E", color: "#FFCC00", display: "inline-flex", alignItems: "center", justifyContent: "center"}}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 20v-7"></path><path d="M11 20V5"></path><path d="M17 20v-10"></path><path d="M3 21h18"></path></svg></span>
@@ -186,7 +186,7 @@ export default function Home() {
             <article style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
               <span style={{width: "44px", height: "44px", borderRadius: "10px", background: "#0D1B3E", color: "#FFCC00", display: "inline-flex", alignItems: "center", justifyContent: "center"}}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"></rect><path d="M3.5 10h17"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg></span>
               <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "20px"}}>Dates et retards justes</h3>
-              <p style={{margin: "0", color: "#4A5575", fontSize: "16px"}}>Dates locales, sans décalage. Une facture échue et impayée passe toute seule à « En retard ».</p>
+              <p style={{margin: "0", color: "#4A5575", fontSize: "16px"}}>Consultez les dates d'échéance et l'état de vos factures depuis le tableau de bord.</p>
             </article>
           </div>
         </section>

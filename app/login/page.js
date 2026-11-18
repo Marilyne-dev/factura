@@ -4,8 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import PhoneMockup from '@/components/PhoneMockup'
-import AuthSlideshow from '@/components/AuthSlideshow'
+import AuthShell, { AuthCard, AuthTitle, AuthError, TextField, PasswordField, SubmitButton } from '@/components/AuthShell'
 
 export default function Login() {
   const router = useRouter()
@@ -41,90 +40,41 @@ export default function Login() {
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-visual">
-        <AuthSlideshow />
+    <AuthShell>
+      <AuthCard>
+        <AuthTitle title="Se connecter" sub="Retrouvez vos factures et vos relances." />
 
-        <svg className="pat-bg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" style={{ opacity: '.5' }}>
-          <defs><pattern id="auth-pat-login" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-            <polygon points="20,1 39,20 20,39 1,20" fill="none" stroke="#fff" strokeWidth=".7" opacity=".2" />
-            <polygon points="20,9 31,20 20,31 9,20" fill="none" stroke="#FFCC00" strokeWidth=".5" opacity=".25" />
-            <circle cx="20" cy="20" r="1.5" fill="#FFCC00" opacity=".3" />
-          </pattern></defs>
-          <rect width="100%" height="100%" fill="url(#auth-pat-login)" />
-        </svg>
+        <AuthError>{error}</AuthError>
 
-        <Link href="/" className="auth-logo">
-          <span className="nf">F</span>actura
-        </Link>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <TextField
+            id="email"
+            label="Adresse e-mail"
+            type="email"
+            autoComplete="email"
+            placeholder="nom@exemple.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-        <div className="auth-visual-mid">
-          <div className="auth-visual-text">
-            <div className="auth-quote">
-              Envoyez la facture.<br />On s&apos;occupe <em>du reste.</em>
-            </div>
-            <p className="auth-subtext">
-              Reconnectez-vous pour retrouver vos factures, vos clients et le suivi de vos relances.
-            </p>
-            <div className="auth-trust">
-              <div className="stars">★★★★★</div>
-              <span>Factura est actuellement en bêta.</span>
-            </div>
-          </div>
-          <PhoneMockup />
-        </div>
+          <PasswordField
+            id="password"
+            label="Mot de passe"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            labelRight={<Link href="/forgot-password" style={{ fontSize: 14, fontWeight: 700 }}>Mot de passe oublié ?</Link>}
+          />
 
-        <Link href="/" className="auth-back">← Retour à l&apos;accueil</Link>
-      </div>
+          <SubmitButton loading={loading}>{loading ? 'Connexion...' : 'Se connecter'}</SubmitButton>
+        </form>
 
-      <div className="auth-form-side">
-        <div className="auth-card">
-          <div className="auth-card-title">Connexion</div>
-          <div className="auth-card-sub">Accédez à votre tableau de bord Factura.</div>
-
-          {error && <div className="auth-error">{error}</div>}
-
-          <form onSubmit={handleSubmit}>
-            <div className="auth-field">
-              <label className="auth-label" htmlFor="email">Email</label>
-              <input
-                id="email"
-                type="email"
-                className="auth-input"
-                placeholder="vous@entreprise.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="auth-field">
-              <label className="auth-label" htmlFor="password">Mot de passe</label>
-              <input
-                id="password"
-                type="password"
-                className="auth-input"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="auth-switch" style={{ marginTop: -8, marginBottom: 18, textAlign: 'right' }}>
-              <Link href="/forgot-password">Mot de passe oublié ?</Link>
-            </div>
-
-            <button type="submit" className="auth-submit" disabled={loading}>
-              {loading ? 'Connexion...' : 'Se connecter'}
-            </button>
-          </form>
-
-          <div className="auth-switch">
-            Pas encore de compte ? <Link href="/register">Créer un compte</Link>
-          </div>
-        </div>
-      </div>
-    </div>
+        <p style={{ margin: 0, fontSize: 15, color: '#4A5575' }}>
+          Pas encore de compte ? <Link href="/register" style={{ fontWeight: 700 }}>Créer ma première facture</Link>
+        </p>
+      </AuthCard>
+    </AuthShell>
   )
 }

@@ -3,13 +3,13 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import PhoneMockup from '@/components/PhoneMockup'
-import AuthSlideshow from '@/components/AuthSlideshow'
+import AuthShell, { AuthCard, AuthTitle, AuthError, TextField, PasswordField, SubmitButton } from '@/components/AuthShell'
 
 export default function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [accepted, setAccepted] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -24,6 +24,10 @@ export default function Register() {
     }
     if (password !== confirmPassword) {
       setError('Les mots de passe ne correspondent pas.')
+      return
+    }
+    if (!accepted) {
+      setError('Vous devez accepter les conditions générales de vente et la politique de confidentialité.')
       return
     }
 
@@ -52,113 +56,80 @@ export default function Register() {
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-visual">
-        <AuthSlideshow />
-
-        <svg className="pat-bg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" style={{ opacity: '.5' }}>
-          <defs><pattern id="auth-pat-register" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-            <polygon points="20,1 39,20 20,39 1,20" fill="none" stroke="#fff" strokeWidth=".7" opacity=".2" />
-            <polygon points="20,9 31,20 20,31 9,20" fill="none" stroke="#FFCC00" strokeWidth=".5" opacity=".25" />
-            <circle cx="20" cy="20" r="1.5" fill="#FFCC00" opacity=".3" />
-          </pattern></defs>
-          <rect width="100%" height="100%" fill="url(#auth-pat-register)" />
-        </svg>
-
-        <Link href="/" className="auth-logo">
-          <span className="nf">F</span>actura
-        </Link>
-
-        <div className="auth-visual-mid">
-          <div className="auth-visual-text">
-            <div className="auth-quote">
-              Arrêtez de courir<br />après vos <em>paiements.</em>
-            </div>
-            <p className="auth-subtext">
-              Créez votre compte pour essayer Factura pendant la bêta.
+    <AuthShell>
+      <AuthCard dark>
+        {success ? (
+          <>
+            <AuthTitle dark title="Vérifiez vos e-mails" />
+            <p style={{ margin: 0, color: '#C9D2EA', fontSize: 16 }}>
+              Un e-mail de confirmation a été envoyé à <strong style={{ color: '#ffffff' }}>{email}</strong>. Cliquez sur le lien pour activer votre compte, puis connectez-vous.
             </p>
-            <div className="auth-trust">
-              <div className="stars">★★★★★</div>
-              <span>Version bêta</span>
-            </div>
-          </div>
-          <PhoneMockup />
-        </div>
+            <p style={{ margin: 0, fontSize: 15 }}>
+              <Link href="/login" style={{ color: '#78B4FF', fontWeight: 700 }}>Retour à la connexion</Link>
+            </p>
+          </>
+        ) : (
+          <>
+            <AuthTitle dark title="Créer un compte" sub="5 factures gratuites par mois · Sans carte · Annulation à tout moment" />
 
-        <Link href="/" className="auth-back">← Retour à l&apos;accueil</Link>
-      </div>
+            <AuthError>{error}</AuthError>
 
-      <div className="auth-form-side">
-        <div className="auth-card">
-          {success ? (
-            <>
-              <div className="auth-card-title">Vérifiez vos emails</div>
-              <div className="auth-success">
-                Un email de confirmation a été envoyé à <strong>{email}</strong>. Cliquez sur le lien pour activer votre compte, puis connectez-vous.
-              </div>
-              <div className="auth-switch">
-                <Link href="/login">Retour à la connexion</Link>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="auth-card-title">Créer un compte</div>
-              <div className="auth-card-sub">Version bêta — conditions et tarifs à venir.</div>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              <TextField
+                id="email"
+                dark
+                label="Adresse e-mail"
+                type="email"
+                autoComplete="email"
+                placeholder="nom@exemple.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
 
-              {error && <div className="auth-error">{error}</div>}
+              <PasswordField
+                id="password"
+                dark
+                label="Mot de passe"
+                help="12 caractères minimum."
+                autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
 
-              <form onSubmit={handleSubmit}>
-                <div className="auth-field">
-                  <label className="auth-label" htmlFor="email">Email</label>
-                  <input
-                    id="email"
-                    type="email"
-                    className="auth-input"
-                    placeholder="vous@entreprise.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
+              <PasswordField
+                id="confirmPassword"
+                dark
+                label="Confirmer le mot de passe"
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
 
-                <div className="auth-field">
-                  <label className="auth-label" htmlFor="password">Mot de passe</label>
-                  <input
-                    id="password"
-                    type="password"
-                    className="auth-input"
-                    placeholder="12 caractères minimum"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: 12, fontSize: 15, cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={accepted}
+                  onChange={(e) => setAccepted(e.target.checked)}
+                  style={{ width: 22, height: 22, margin: '1px 0 0', accentColor: '#FFCC00', flex: 'none' }}
+                />
+                <span>J&apos;accepte les <a href="#" style={{ color: '#78B4FF', fontWeight: 600 }}>conditions générales de vente</a> et la <a href="#" style={{ color: '#78B4FF', fontWeight: 600 }}>politique de confidentialité</a>.</span>
+              </label>
 
-                <div className="auth-field">
-                  <label className="auth-label" htmlFor="confirmPassword">Confirmer le mot de passe</label>
-                  <input
-                    id="confirmPassword"
-                    type="password"
-                    className="auth-input"
-                    placeholder="••••••••"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                  />
-                </div>
+              <SubmitButton dark loading={loading}>{loading ? 'Création...' : 'Créer mon compte'}</SubmitButton>
+            </form>
 
-                <button type="submit" className="auth-submit" disabled={loading}>
-                  {loading ? 'Création...' : 'Créer mon compte'}
-                </button>
-              </form>
-
-              <div className="auth-switch">
-                Déjà un compte ? <Link href="/login">Se connecter</Link>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
+            <p style={{ margin: 0, fontSize: 14, color: '#C9D2EA' }}>
+              Votre nom et le nom de votre entreprise vous seront demandés après, pas avant.
+            </p>
+            <p style={{ margin: 0, fontSize: 15, color: '#C9D2EA' }}>
+              Déjà un compte ? <Link href="/login" style={{ color: '#78B4FF', fontWeight: 700 }}>Se connecter</Link>
+            </p>
+          </>
+        )}
+      </AuthCard>
+    </AuthShell>
   )
 }
