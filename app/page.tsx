@@ -1,648 +1,317 @@
-"use client"
-
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import './landing.css'
+
+export const metadata = {
+  title: 'Factura — Envoyez la facture. On s\'occupe du reste.',
+  description: 'Factura crée vos factures, relance vos clients sur WhatsApp, et vous fait encaisser en Mobile Money.',
+}
 
 export default function Home() {
-  const [scrolled, setScrolled] = useState(false)
-  // Mettre à true uniquement quand les témoignages sont de vraies citations de vrais clients
-  const SHOW_TESTIMONIALS = false
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    onScroll()
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
   return (
     <>
+      <div className="lp" style={{width: "100%", background: "#F7F5EF"}}>
 
+        {/* EN-TETE + HERO (bleu nuit) */}
+        <div style={{background: "#0D1B3E", color: "#ffffff"}}>
+          <header style={{maxWidth: "1200px", margin: "0 auto", padding: "20px 24px", boxSizing: "border-box", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "16px"}}>
+            <a href="#" aria-label="Factura, accueil" style={{display: "flex", alignItems: "center", gap: "10px", textDecoration: "none", color: "#ffffff"}}>
+              <span style={{width: "36px", height: "36px", borderRadius: "8px", background: "#FFCC00", color: "#0D1B3E", display: "inline-flex", alignItems: "center", justifyContent: "center"}}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"></path><path d="M10 14l2 2 3.5-4"></path></svg>
+              </span>
+              <span style={{fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "24px", letterSpacing: "-0.02em"}}>Factura</span>
+            </a>
+            <nav aria-label="Navigation principale" style={{display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px 28px"}}>
+              <a href="#etapes" style={{color: "#ffffff", textDecoration: "none", fontWeight: "500", fontSize: "15px"}}>Comment ça marche</a>
+              <a href="#fonctions" style={{color: "#ffffff", textDecoration: "none", fontWeight: "500", fontSize: "15px"}}>Fonctions</a>
+              <a href="#tarifs" style={{color: "#ffffff", textDecoration: "none", fontWeight: "500", fontSize: "15px"}}>Tarifs</a>
+              <a href="#faq" style={{color: "#ffffff", textDecoration: "none", fontWeight: "500", fontSize: "15px"}}>FAQ</a>
+              <Link href="/login" style={{color: "#ffffff", fontWeight: "600", fontSize: "15px"}}>Se connecter</Link>
+              <Link href="/register" style={{display: "inline-flex", alignItems: "center", justifyContent: "center", height: "48px", padding: "0 22px", borderRadius: "8px", background: "#FFCC00", color: "#0D1B3E", fontWeight: "700", fontSize: "15px", textDecoration: "none"}}>Créer ma première facture</Link>
+            </nav>
+          </header>
 
-{/* ══════════════════════════════════
-     NAV
-══════════════════════════════════ */}
-<nav className={`nav ${scrolled ? "scrolled" : ""}`} id="nav">
-  <div className="container">
-    <div className="nav-inner">
-      <a href="#hero" className="nav-logo">
-        <span className="nf">F</span><span className="nc">actura</span>
-        <svg width="18" height="18" viewBox="0 0 22 22" fill="none" style={{marginLeft: '2px'}} xmlns="http://www.w3.org/2000/svg">
-          <path d="M4 11.5L9 16.5L18 6" stroke="#E8A020" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </a>
-      <ul className="nav-links">
-        <li><a href="#hiw">Comment ça marche</a></li>
-        <li><a href="#features">Fonctionnalités</a></li>
-        <li><a href="#pricing">Tarifs</a></li>
-      </ul>
-      <div className="nav-actions">
-        <Link href="/login" className="nav-login">Connexion</Link>
-        <Link href="/register" className="nav-cta">Commencer gratuitement</Link>
-      </div>
-    </div>
-  </div>
-</nav>
-
-
-{/* ══════════════════════════════════
-     HERO
-══════════════════════════════════ */}
-<section className="hero" id="hero">
-  <svg className="pat-bg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-    <defs><pattern id="hero-pat" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-      <polygon points="20,1 39,20 20,39 1,20" fill="none" stroke="#fff" strokeWidth=".7" opacity=".25" />
-      <polygon points="20,9 31,20 20,31 9,20" fill="none" stroke="#E8A020" strokeWidth=".5" opacity=".3" />
-      <circle cx="20" cy="20" r="1.5" fill="#E8A020" opacity=".35" />
-      <circle cx="0" cy="0" r="1.2" fill="#fff" opacity=".15" />
-      <circle cx="40" cy="0" r="1.2" fill="#fff" opacity=".15" />
-      <circle cx="0" cy="40" r="1.2" fill="#fff" opacity=".15" />
-      <circle cx="40" cy="40" r="1.2" fill="#fff" opacity=".15" />
-    </pattern></defs>
-    <rect width="100%" height="100%" fill="url(#hero-pat)" />
-  </svg>
-
-  <div className="container">
-    <div className="hero-grid">
-
-      {/* Copy */}
-      <div className="hero-copy">
-        <div className="hero-eyebrow">WhatsApp · Mobile Money · XOF &amp; EUR</div>
-        <h1 className="hero-title">
-          Envoyez la<br />
-          facture. <em>On<br />
-          s&apos;occupe</em><br />
-          du reste.
-        </h1>
-        <p className="hero-sub">
-          Factura relance vos clients impayés via WhatsApp et encaisse en Mobile Money — sans que vous leviez le petit doigt.
-        </p>
-        <div className="hero-ctas">
-          <Link href="/register" className="btn-hero-p">Commencer gratuitement →</Link>
-          <a href="#hiw" className="btn-hero-g">Voir la démo ▶</a>
-        </div>
-        <div className="hero-trust">Pas de carte bancaire · Annulation à tout moment · 5 factures gratuites</div>
-        <div className="hero-social">
-          <div className="stars">★★★★★</div>
-          <span>Utilisé par <strong style={{color: 'rgba(255,255,255,.75)'}}>500+ freelances</strong> et PME en Afrique de l'Ouest</span>
-        </div>
-      </div>
-
-      {/* Visual */}
-      <div className="hero-visual">
-
-        {/* Floating badges */}
-        <div className="hero-badge hero-badge-left">
-          <div className="hb-ico">💰</div>
-          <div>
-            <div className="hb-t">+750 000 XOF</div>
-            <div className="hb-s">vient d&apos;être encaissé</div>
-          </div>
-        </div>
-        <div className="hero-badge hero-badge-right">
-          <div className="hb-ico">📱</div>
-          <div>
-            <div className="hb-t">Relance envoyée</div>
-            <div className="hb-s">Kofi · FAC-047 · J+7</div>
-          </div>
-        </div>
-
-        {/* Phone */}
-        <div className="phone-wrap">
-          <div className="phone-notch"></div>
-          <div className="phone-screen">
-            <div className="phone-status">
-              <span>09:23</span>
-              <span>▌▌▌ WiFi ⬛</span>
-            </div>
-            <div className="wa-topbar">
-              <div className="wa-av-s">F</div>
-              <div>
-                <div className="wa-info-name">Factura · relances</div>
-                <div className="wa-info-sub">en ligne</div>
+          <section style={{maxWidth: "1200px", margin: "0 auto", padding: "56px 24px 96px", boxSizing: "border-box", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "56px"}}>
+            <div style={{flex: "1 1 460px", minWidth: "0", display: "flex", flexDirection: "column", gap: "24px", alignItems: "flex-start"}}>
+              <span style={{display: "inline-flex", alignItems: "center", gap: "8px", padding: "6px 14px", borderRadius: "999px", border: "1.5px solid #78B4FF", color: "#ffffff", fontSize: "13px", fontWeight: "600"}}>
+                <span style={{width: "8px", height: "8px", borderRadius: "50%", background: "#FFCC00"}}></span>
+                Produit en bêta : nous construisons en public
+              </span>
+              <h1 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "clamp(40px,5.2vw,68px)", lineHeight: "1.04", letterSpacing: "-0.03em", color: "#ffffff"}}>Envoyez la facture. <span style={{color: "#FFCC00"}}>On s'occupe du reste.</span></h1>
+              <p style={{margin: "0", fontSize: "20px", lineHeight: "1.5", color: "#C9D2EA", maxWidth: "540px"}}>Factura crée vos factures, relance vos clients sur WhatsApp, et vous fait encaisser en Mobile Money.</p>
+              <div style={{display: "flex", flexWrap: "wrap", gap: "12px"}}>
+                <Link href="/register" style={{display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "10px", height: "48px", padding: "0 26px", borderRadius: "8px", background: "#FFCC00", color: "#0D1B3E", fontWeight: "700", fontSize: "16px", textDecoration: "none"}}>Créer ma première facture
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+                </Link>
+                <a href="#demo" style={{display: "inline-flex", alignItems: "center", justifyContent: "center", height: "48px", padding: "0 26px", borderRadius: "8px", border: "2px solid #ffffff", color: "#ffffff", fontWeight: "600", fontSize: "16px", textDecoration: "none", boxSizing: "border-box"}}>Voir la démo</a>
               </div>
+              <p style={{margin: "0", fontSize: "14px", color: "#C9D2EA"}}>5 factures gratuites par mois · Sans carte · Annulation à tout moment</p>
             </div>
-            <div className="chat-area">
 
-              {/* Step 1: Invoice card */}
-              <div className="anim-invoice">
-                <div className="ai-label">FACTURE EN ATTENTE</div>
-                <div className="ai-client">Awa Diallo</div>
-                <div className="ai-num">FAC-2026-047 · Agence Créative</div>
-                <div className="ai-row">
-                  <div className="ai-amt">750 000 <span style={{fontSize: '13px', color: 'rgba(255,255,255,.4)'}}>XOF</span></div>
-                  <div className="ai-due">
-                    <div style={{color: 'var(--terra)', fontSize: '10px', fontWeight: '700'}}>EN RETARD</div>
-                    <div>+7 jours</div>
+            {/* Produit réel : facture, relance, payée */}
+            <div style={{flex: "1 1 440px", minWidth: "0", display: "flex", flexDirection: "column", gap: "16px"}}>
+              <div style={{background: "#ffffff", color: "#0D1B3E", borderRadius: "16px", padding: "24px", boxShadow: "0 24px 48px -16px rgba(0,0,0,0.5)", display: "flex", flexDirection: "column", gap: "20px"}}>
+                <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px"}}>
+                  <div>
+                    <div style={{fontSize: "13px", color: "#4A5575", fontWeight: "600"}}>Facture FAC-2026-014</div>
+                    <div style={{fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "20px"}}>Studio Abomey</div>
+                  </div>
+                  <span style={{padding: "4px 10px", borderRadius: "6px", background: "#F7F5EF", color: "#4A5575", fontSize: "12px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.04em"}}>Exemple</span>
+                </div>
+                <div style={{display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "12px"}}>
+                  <div style={{fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "40px", letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums"}}>150 000 XOF</div>
+                  <span style={{display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 10px", borderRadius: "999px", background: "#F9E0E0", color: "#A52A2A", fontSize: "12px", fontWeight: "700"}}><span style={{width: "8px", height: "8px", borderRadius: "50%", background: "#D64545"}}></span>En retard · 3 jours</span>
+                </div>
+                <div style={{height: "1px", background: "#E3E0D5"}}></div>
+                <div>
+                  <div style={{fontSize: "12px", fontWeight: "700", letterSpacing: "0.06em", textTransform: "uppercase", color: "#4A5575", marginBottom: "12px"}}>Séquence de relance WhatsApp</div>
+                  <div style={{display: "flex", gap: "8px"}}>
+                    <div style={{flex: "1", display: "flex", flexDirection: "column", alignItems: "center", gap: "6px"}}>
+                      <span style={{width: "32px", height: "32px", borderRadius: "50%", background: "#0D1B3E", color: "#FFCC00", display: "inline-flex", alignItems: "center", justifyContent: "center"}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"></path></svg></span>
+                      <span style={{fontSize: "13px", fontWeight: "700"}}>J+3</span><span style={{fontSize: "12px", color: "#4A5575"}}>Envoyée</span>
+                    </div>
+                    <div style={{flex: "1", display: "flex", flexDirection: "column", alignItems: "center", gap: "6px"}}>
+                      <span style={{width: "32px", height: "32px", borderRadius: "50%", border: "2px solid #0D1B3E", boxSizing: "border-box"}}></span>
+                      <span style={{fontSize: "13px", fontWeight: "700"}}>J+7</span><span style={{fontSize: "12px", color: "#4A5575"}}>Prévue</span>
+                    </div>
+                    <div style={{flex: "1", display: "flex", flexDirection: "column", alignItems: "center", gap: "6px"}}>
+                      <span style={{width: "32px", height: "32px", borderRadius: "50%", border: "2px solid #0D1B3E", boxSizing: "border-box"}}></span>
+                      <span style={{fontSize: "13px", fontWeight: "700"}}>J+14</span><span style={{fontSize: "12px", color: "#4A5575"}}>Prévue</span>
+                    </div>
+                    <div style={{flex: "1", display: "flex", flexDirection: "column", alignItems: "center", gap: "6px"}}>
+                      <span style={{width: "32px", height: "32px", borderRadius: "50%", border: "2px solid #0D1B3E", boxSizing: "border-box"}}></span>
+                      <span style={{fontSize: "13px", fontWeight: "700"}}>J+30</span><span style={{fontSize: "12px", color: "#4A5575"}}>Prévue</span>
+                    </div>
                   </div>
                 </div>
-                <div className="ai-bar">
-                  <div className="ai-seg done"></div>
-                  <div className="ai-seg done"></div>
-                  <div className="ai-seg now"></div>
-                  <div className="ai-seg"></div>
-                  <div className="ai-seg"></div>
+                <div style={{background: "#F7F5EF", borderRadius: "12px", padding: "16px", display: "flex", flexDirection: "column", gap: "8px"}}>
+                  <div style={{display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", fontWeight: "700", color: "#4A5575"}}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 5h16v11H10l-6 4z"></path></svg>
+                    Aperçu du message · J+3
+                  </div>
+                  <p style={{margin: "0", fontSize: "15px", lineHeight: "1.5"}}>Bonjour Rose, votre facture FAC-2026-014 de 150 000 XOF est échue depuis 3 jours. Payez en un clic avec Wave ou Orange Money : <span style={{fontWeight: "700", textDecoration: "underline"}}>[lien de paiement]</span></p>
                 </div>
               </div>
-
-              {/* Step 2: Sending */}
-              <div className="anim-sending">
-                <div className="send-dot"></div>
-                <div className="send-txt">Envoi relance WhatsApp J+7...</div>
-              </div>
-
-              {/* Step 3: WhatsApp bubble */}
-              <div className="anim-bubble">
-                <div className="bubble-txt">
-                  Bonjour <strong>Awa</strong> 👋<br />
-                  Votre facture de <span className="bubble-amt">750 000 XOF</span> est en attente depuis 7 jours.<br />
-                  Réglez en 1 clic 👇
-                </div>
-                <div className="bubble-time">09:23 ✓✓</div>
-                <div className="bubble-btns">
-                  <div className="bubble-btn">💳 Payer</div>
-                  <div className="bubble-btn">📄 Facture</div>
+              <div style={{background: "#16295C", border: "1px solid #2F4585", borderRadius: "14px", padding: "16px 20px", display: "flex", alignItems: "center", gap: "14px"}}>
+                <span style={{width: "40px", height: "40px", borderRadius: "50%", background: "#FFCC00", color: "#0D1B3E", display: "inline-flex", alignItems: "center", justifyContent: "center", flex: "none"}}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"></path></svg></span>
+                <div>
+                  <div style={{fontWeight: "700", fontSize: "15px", color: "#ffffff"}}>Paiement reçu en Mobile Money</div>
+                  <div style={{fontSize: "14px", color: "#C9D2EA"}}>La facture passe à « Payée ». Les relances s'arrêtent d'elles-mêmes.</div>
                 </div>
               </div>
+            </div>
+          </section>
+        </div>
 
-              {/* Step 4: Paid confirmation */}
-              <div className="anim-paid">
-                <div className="paid-icon">✅</div>
-                <div className="paid-info">
-                  <div className="paid-label">Paiement reçu ✓</div>
-                  <div className="paid-amt">750 000 XOF</div>
-                </div>
+        {/* PROBLEME */}
+        <section style={{maxWidth: "1200px", margin: "0 auto", padding: "96px 24px 48px", boxSizing: "border-box"}}>
+          <div style={{maxWidth: "720px", marginBottom: "40px"}}>
+            <div style={{fontSize: "13px", fontWeight: "700", letterSpacing: "0.08em", textTransform: "uppercase", color: "#4A5575", marginBottom: "12px"}}>Le problème</div>
+            <h2 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "clamp(30px,3.6vw,44px)", lineHeight: "1.12", letterSpacing: "-0.02em"}}>Se faire payer ne devrait pas être un deuxième métier.</h2>
+          </div>
+          <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "20px"}}>
+            <article style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
+              <div style={{fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "32px", color: "#0D1B3E"}}>01</div>
+              <p style={{margin: "0", fontSize: "17px", lineHeight: "1.55"}}>Vous avez envoyé la facture il y a trois semaines. Le client a lu votre message. Aucune réponse.</p>
+            </article>
+            <article style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
+              <div style={{fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "32px", color: "#0D1B3E"}}>02</div>
+              <p style={{margin: "0", fontSize: "17px", lineHeight: "1.55"}}>Relancer, c'est réécrire le même message gênant, sans savoir si c'est trop tôt ou trop tard.</p>
+            </article>
+            <article style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
+              <div style={{fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "32px", color: "#0D1B3E"}}>03</div>
+              <p style={{margin: "0", fontSize: "17px", lineHeight: "1.55"}}>Le virement arrive sur Mobile Money. Vous cherchez quelle facture il règle, dans quel cahier, dans quel fichier.</p>
+            </article>
+          </div>
+        </section>
+
+        {/* 3 ETAPES */}
+        <section id="etapes" style={{background: "#0D1B3E", color: "#ffffff", marginTop: "48px"}}>
+          <div style={{maxWidth: "1200px", margin: "0 auto", padding: "88px 24px", boxSizing: "border-box"}}>
+            <div style={{maxWidth: "720px", marginBottom: "48px"}}>
+              <div style={{fontSize: "13px", fontWeight: "700", letterSpacing: "0.08em", textTransform: "uppercase", color: "#78B4FF", marginBottom: "12px"}}>Comment ça marche</div>
+              <h2 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "clamp(30px,3.6vw,44px)", lineHeight: "1.12", letterSpacing: "-0.02em", color: "#ffffff"}}>Trois étapes. Puis Factura prend le relais.</h2>
+            </div>
+            <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "20px"}}>
+              <div style={{border: "1px solid #2F4585", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
+                <span style={{width: "40px", height: "40px", borderRadius: "50%", background: "#FFCC00", color: "#0D1B3E", display: "inline-flex", alignItems: "center", justifyContent: "center", fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "18px"}}>1</span>
+                <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "24px"}}>Créez</h3>
+                <p style={{margin: "0", color: "#C9D2EA", fontSize: "16px"}}>Client, lignes, montant en XOF. Votre profil d'entreprise s'affiche sur chaque facture.</p>
               </div>
-
+              <div style={{border: "1px solid #2F4585", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
+                <span style={{width: "40px", height: "40px", borderRadius: "50%", background: "#FFCC00", color: "#0D1B3E", display: "inline-flex", alignItems: "center", justifyContent: "center", fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "18px"}}>2</span>
+                <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "24px"}}>Envoyez</h3>
+                <p style={{margin: "0", color: "#C9D2EA", fontSize: "16px"}}>Par e-mail ou par lien. Le statut passe à « Envoyée » seulement après un envoi réussi.</p>
+              </div>
+              <div style={{border: "1px solid #2F4585", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
+                <span style={{width: "40px", height: "40px", borderRadius: "50%", background: "#FFCC00", color: "#0D1B3E", display: "inline-flex", alignItems: "center", justifyContent: "center", fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "18px"}}>3</span>
+                <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "24px"}}>Encaissez</h3>
+                <p style={{margin: "0", color: "#C9D2EA", fontSize: "16px"}}>Relances WhatsApp à J+3, J+7, J+14 et J+30, avec un lien de paiement. Arrêt automatique dès que la facture est payée.</p>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+        </section>
 
-
-{/* ══════════════════════════════════
-     STATS BAR
-══════════════════════════════════ */}
-<div className="stats-bar">
-  <div className="container">
-    <div className="stats-inner">
-      <div className="stat-item">
-        <div className="stat-n">500+</div>
-        <div className="stat-l">freelances & PME actifs</div>
-      </div>
-      <div className="stat-div"></div>
-      <div className="stat-item">
-        <div className="stat-n">6</div>
-        <div className="stat-l">pays en Afrique de l'Ouest</div>
-      </div>
-      <div className="stat-div"></div>
-      <div className="stat-item">
-        <div className="stat-n">−15j</div>
-        <div className="stat-l">délai de paiement moyen</div>
-      </div>
-      <div className="stat-div"></div>
-      <div className="stat-item">
-        <div className="stat-n">4</div>
-        <div className="stat-l">Mobile Money intégrés</div>
-      </div>
-      <div className="stat-div"></div>
-      <div className="stat-item">
-        <div className="stat-n">98%</div>
-        <div className="stat-l">de taux de livraison WhatsApp</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-{/* ══════════════════════════════════
-     PAIN
-══════════════════════════════════ */}
-<section className="pain-sec" id="pain">
-  <svg className="pat-bg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" style={{opacity: '.12'}}>
-    <defs><pattern id="pain-pat" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-      <polygon points="20,1 39,20 20,39 1,20" fill="none" stroke="#fff" strokeWidth=".8"/>
-      <circle cx="20" cy="20" r="1.5" fill="#C4521A"/>
-    </pattern></defs>
-    <rect width="100%" height="100%" fill="url(#pain-pat)"/>
-  </svg>
-  <div className="container" style={{position: 'relative', zIndex: '1'}}>
-    <div className="pain-eyebrow">La réalité du terrain</div>
-    <h2 className="pain-title">Les factures impayées coûtent plus qu'on ne le croit.</h2>
-
-    <div className="pain-grid">
-      <div className="pain-card">
-        <div className="pain-big">47<span className="pain-big-unit">j</span></div>
-        <div className="pain-card-title">Délai moyen avant paiement</div>
-        <div className="pain-card-desc">En Afrique de l'Ouest, un freelance attend en moyenne 47 jours pour être payé. Pendant ce temps, les charges continuent de tomber.</div>
-      </div>
-      <div className="pain-card">
-        <div className="pain-big">6<span className="pain-big-unit">×</span></div>
-        <div className="pain-card-title">Relances manuelles par facture</div>
-        <div className="pain-card-desc">6 messages, 6 moments de tension avec votre client. Chaque relance manuelle coûte du temps, de l'énergie et parfois la relation.</div>
-      </div>
-      <div className="pain-card">
-        <div className="pain-big">23<span className="pain-big-unit">%</span></div>
-        <div className="pain-card-title">Des factures jamais payées</div>
-        <div className="pain-card-desc">Faute de suivi systématique, près d'une facture sur quatre finit aux oubliettes. De l'argent gagné, mais jamais encaissé.</div>
-      </div>
-    </div>
-
-    <div className="pain-bottom">
-      <div className="pain-bottom-ico">💡</div>
-      <div className="pain-bottom-txt">
-        <strong>Ce n'est pas un problème de clients difficiles.</strong> C'est un problème de process. Dès que la relance est automatique, systématique et personnalisée — les clients paient. Factura s'en charge à votre place.
-      </div>
-    </div>
-  </div>
-</section>
-
-
-{/* ══════════════════════════════════
-     HOW IT WORKS
-══════════════════════════════════ */}
-<section className="hiw-sec" id="hiw">
-  <div className="container">
-    <div className="sec-label">Comment ça marche</div>
-    <h2 className="sec-title">Trois étapes. Zéro effort.</h2>
-    <p className="sec-sub">Pas de formation, pas d'intégration complexe. Vous créez une facture, Factura fait le reste.</p>
-
-    <div className="hiw-steps">
-      <div className="hiw-step">
-        <div className="step-num">01</div>
-        <div className="step-icon">📄</div>
-        <h3 className="step-title">Créez votre facture en 3 minutes</h3>
-        <p className="step-desc">Depuis Factura ou importée depuis vos outils existants. Votre logo, votre numéro de facture, les détails de votre prestation — en XOF ou EUR.</p>
-        <div className="step-tag">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#0F3D2A" strokeWidth="1.2"/><path d="M4 6l1.5 1.5L8 4" stroke="#0F3D2A" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          PDF automatique
-        </div>
-      </div>
-
-      <div className="hiw-step">
-        <div className="step-num">02</div>
-        <div className="step-icon">📱</div>
-        <h3 className="step-title">Factura relance à votre place</h3>
-        <p className="step-desc">J+3, J+7, J+14, J+30... Chaque message WhatsApp est personnalisé avec le nom du client, le montant exact et un lien de paiement direct. Vos clients croient que vous écrivez vous-même.</p>
-        <div className="step-tag">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#0F3D2A" strokeWidth="1.2"/><path d="M4 6l1.5 1.5L8 4" stroke="#0F3D2A" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          100% automatique
-        </div>
-      </div>
-
-      <div className="hiw-step">
-        <div className="step-num">03</div>
-        <div className="step-icon">✅</div>
-        <h3 className="step-title">Votre client paie. Vous encaissez.</h3>
-        <p className="step-desc">Orange Money, Wave, MTN MoMo, Moov Money, carte bancaire. L'argent arrive sur votre compte. Vous recevez une notification instantanée. La facture est clôturée.</p>
-        <div className="step-tag">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#0F3D2A" strokeWidth="1.2"/><path d="M4 6l1.5 1.5L8 4" stroke="#0F3D2A" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          4 opérateurs Mobile Money
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-{/* ══════════════════════════════════
-     FEATURES
-══════════════════════════════════ */}
-<section className="feat-sec" id="features">
-  <svg className="pat-bg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-    <defs><pattern id="feat-pat" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-      <polygon points="20,1 39,20 20,39 1,20" fill="none" stroke="#fff" strokeWidth=".7" opacity=".25"/>
-      <polygon points="20,9 31,20 20,31 9,20" fill="none" stroke="#E8A020" strokeWidth=".5" opacity=".3"/>
-      <circle cx="20" cy="20" r="1.5" fill="#E8A020" opacity=".3"/>
-    </pattern></defs>
-    <rect width="100%" height="100%" fill="url(#feat-pat)"/>
-  </svg>
-  <div className="container" style={{position: 'relative', zIndex: '1'}}>
-    <div className="sec-label">Fonctionnalités</div>
-    <h2 className="sec-title" style={{color: '#fff'}}>Tout ce dont vous avez besoin.<br />Rien de superflu.</h2>
-    <p className="sec-sub" style={{color: 'rgba(255,255,255,.5)'}}>Conçu pour des gens qui n'ont pas de temps à perdre.</p>
-
-    <div className="feat-grid">
-      <div className="feat-card">
-        <div className="feat-ico">📱</div>
-        <h3 className="feat-title">Relances WhatsApp automatiques</h3>
-        <p className="feat-desc">Séquences de relance programmées et personnalisées. Le bon message, au bon moment, dans le bon ton — sans que vous y pensiez.</p>
-        <div className="feat-pill">J+3 · J+7 · J+14 · J+30</div>
-      </div>
-      <div className="feat-card">
-        <div className="feat-ico">💸</div>
-        <h3 className="feat-title">Paiement Mobile Money intégré</h3>
-        <p className="feat-desc">Orange Money, Wave, MTN MoMo, Moov Money. Chaque lien de paiement est personnalisé par facture. L'encaissement est instantané.</p>
-        <div className="feat-pill">4 opérateurs · Carte Visa/MC</div>
-      </div>
-      <div className="feat-card">
-        <div className="feat-ico">🧾</div>
-        <h3 className="feat-title">Factures professionnelles en XOF</h3>
-        <p className="feat-desc">PDF propre à votre image, numérotation automatique, TVA calculée, mentions légales. Prêt à envoyer en 3 minutes.</p>
-        <div className="feat-pill">XOF · EUR · PDF + lien</div>
-      </div>
-      <div className="feat-card">
-        <div className="feat-ico">📊</div>
-        <h3 className="feat-title">Tableau de bord en temps réel</h3>
-        <p className="feat-desc">Ce qui est payé, ce qui attend, ce qui est en retard. Vos KPIs financiers au premier coup d'œil, sur mobile comme sur desktop.</p>
-        <div className="feat-pill">Temps réel · Mobile-first</div>
-      </div>
-      <div className="feat-card">
-        <div className="feat-ico">👥</div>
-        <h3 className="feat-title">Gestion multi-clients</h3>
-        <p className="feat-desc">Carnet de clients centralisé. Historique complet de chaque relation. Savoir en un clin d'œil qui paye bien et qui il faut surveiller.</p>
-        <div className="feat-pill">Historique · Scoring client</div>
-      </div>
-      <div className="feat-card">
-        <div className="feat-ico">🌍</div>
-        <h3 className="feat-title">Europe-ready</h3>
-        <p className="feat-desc">Basculez en EUR et SEPA en un clic. Factura est conçu pour une expansion sans friction — de Dakar à Paris, de Lomé à Bruxelles.</p>
-        <div className="feat-pill">XOF → EUR · SEPA</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-{/* ══════════════════════════════════
-     TESTIMONIALS
-══════════════════════════════════ */}
-{SHOW_TESTIMONIALS && (
-<section className="testi-sec" id="testimonials">
-  <div className="container">
-    <div className="sec-label text-center">Témoignages</div>
-    <h2 className="sec-title text-center">Ils font confiance à Factura</h2>
-    <p className="sec-sub text-center" style={{marginLeft: 'auto', marginRight: 'auto'}}>Des freelances et gérants de PME qui ont arrêté de courir après leurs paiements.</p>
-
-    <div className="testi-grid">
-      <div className="testi-card">
-        <div className="testi-stars">★★★★★</div>
-        <p className="testi-quote">
-          "Avant Factura, je passais deux heures par semaine à envoyer des rappels. Maintenant c'est zéro. Un client qui ne payait jamais en moins de 45 jours le fait en <strong>8 jours en moyenne</strong> depuis que les relances sont automatiques."
-        </p>
-        <div className="testi-author">
-          <div className="testi-avatar">AK</div>
-          <div>
-            <div className="testi-name">Amadou Keïta</div>
-            <div className="testi-role">Développeur web freelance · Dakar, SN</div>
+        {/* FONCTIONS */}
+        <section id="fonctions" style={{maxWidth: "1200px", margin: "0 auto", padding: "96px 24px", boxSizing: "border-box"}}>
+          <div style={{maxWidth: "720px", marginBottom: "40px"}}>
+            <div style={{fontSize: "13px", fontWeight: "700", letterSpacing: "0.08em", textTransform: "uppercase", color: "#4A5575", marginBottom: "12px"}}>Fonctions</div>
+            <h2 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "clamp(30px,3.6vw,44px)", lineHeight: "1.12", letterSpacing: "-0.02em"}}>Ce qu'il faut pour se faire payer. Rien de plus.</h2>
           </div>
-        </div>
-      </div>
-      <div className="testi-card">
-        <div className="testi-stars">★★★★★</div>
-        <p className="testi-quote">
-          "J'ai récupéré <strong>1,2 million XOF</strong> de factures que j'avais presque abandonnées. Factura a envoyé les relances, mes clients ont payé. Je n'ai rien fait. C'est exactement la promesse."
-        </p>
-        <div className="testi-author">
-          <div className="testi-avatar" style={{background: 'var(--gold)', color: 'var(--nuit)'}}>AM</div>
-          <div>
-            <div className="testi-name">Awa Mensah</div>
-            <div className="testi-role">Directrice agence créative · Abidjan, CI</div>
+          <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: "20px"}}>
+            <article style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
+              <span style={{width: "44px", height: "44px", borderRadius: "10px", background: "#0D1B3E", color: "#FFCC00", display: "inline-flex", alignItems: "center", justifyContent: "center"}}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"></path><path d="M14 3v5h5"></path><path d="M10 13h6"></path><path d="M10 17h6"></path></svg></span>
+              <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "20px"}}>Factures claires</h3>
+              <p style={{margin: "0", color: "#4A5575", fontSize: "16px"}}>TVA exacte. 200 000 XOF HT + 18 % = 236 000 XOF TTC. Modifiables en brouillon, numéros jamais réutilisés.</p>
+            </article>
+            <article style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
+              <span style={{width: "44px", height: "44px", borderRadius: "10px", background: "#0D1B3E", color: "#FFCC00", display: "inline-flex", alignItems: "center", justifyContent: "center"}}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 5h16v11H10l-6 4z"></path><path d="M8 9.5h8"></path><path d="M8 12.5h5"></path></svg></span>
+              <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "20px"}}>Relances WhatsApp</h3>
+              <p style={{margin: "0", color: "#4A5575", fontSize: "16px"}}>Une séquence visible, un aperçu du message avant l'envoi, un journal des relances. Arrêt automatique si payé.</p>
+            </article>
+            <article style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
+              <span style={{width: "44px", height: "44px", borderRadius: "10px", background: "#0D1B3E", color: "#FFCC00", display: "inline-flex", alignItems: "center", justifyContent: "center"}}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"></rect><path d="M11 18h2"></path></svg></span>
+              <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "20px"}}>Lien de paiement</h3>
+              <p style={{margin: "0", color: "#4A5575", fontSize: "16px"}}>Un lien par facture, Mobile Money et carte. Le client paie en un clic, sans créer de compte.</p>
+            </article>
+            <article style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
+              <span style={{width: "44px", height: "44px", borderRadius: "10px", background: "#0D1B3E", color: "#FFCC00", display: "inline-flex", alignItems: "center", justifyContent: "center"}}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 20v-7"></path><path d="M11 20V5"></path><path d="M17 20v-10"></path><path d="M3 21h18"></path></svg></span>
+              <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "20px"}}>Tableau de bord exact</h3>
+              <p style={{margin: "0", color: "#4A5575", fontSize: "16px"}}>Encaissé, en attente, en retard, taux de recouvrement. Calculés depuis le statut et la date de paiement.</p>
+            </article>
+            <article style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
+              <span style={{width: "44px", height: "44px", borderRadius: "10px", background: "#0D1B3E", color: "#FFCC00", display: "inline-flex", alignItems: "center", justifyContent: "center"}}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg></span>
+              <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "20px"}}>Fiche client</h3>
+              <p style={{margin: "0", color: "#4A5575", fontSize: "16px"}}>Historique, solde dû, dernière relance et délai moyen de paiement, sur une seule page.</p>
+            </article>
+            <article style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "12px"}}>
+              <span style={{width: "44px", height: "44px", borderRadius: "10px", background: "#0D1B3E", color: "#FFCC00", display: "inline-flex", alignItems: "center", justifyContent: "center"}}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"></rect><path d="M3.5 10h17"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg></span>
+              <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "20px"}}>Dates et retards justes</h3>
+              <p style={{margin: "0", color: "#4A5575", fontSize: "16px"}}>Dates locales, sans décalage. Une facture échue et impayée passe toute seule à « En retard ».</p>
+            </article>
           </div>
-        </div>
-      </div>
-      <div className="testi-card">
-        <div className="testi-stars">★★★★★</div>
-        <p className="testi-quote">
-          "Ce que j'aime, c'est que mes clients <strong>ne savent pas que c'est automatique</strong>. Les messages ont l'air d'être écrits par moi. Ça maintient la relation tout en assurant le paiement."
-        </p>
-        <div className="testi-author">
-          <div className="testi-avatar" style={{background: 'var(--terra)'}}>KA</div>
-          <div>
-            <div className="testi-name">Kossi Agbéko</div>
-            <div className="testi-role">Consultant RH indépendant · Lomé, TG</div>
+        </section>
+
+        {/* DEMO */}
+        <section id="demo" style={{maxWidth: "1200px", margin: "0 auto", padding: "0 24px 96px", boxSizing: "border-box"}}>
+          <div style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "20px", padding: "48px", display: "flex", flexWrap: "wrap", gap: "48px", alignItems: "center"}}>
+            <div style={{flex: "1 1 380px", minWidth: "0", display: "flex", flexDirection: "column", gap: "20px", alignItems: "flex-start"}}>
+              <h2 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "clamp(28px,3.2vw,40px)", lineHeight: "1.12", letterSpacing: "-0.02em"}}>Essayez avant de vous inscrire.</h2>
+              <p style={{margin: "0", color: "#4A5575", fontSize: "17px"}}>Une démo réelle, avec des données d'exemple clairement étiquetées. Créez une facture, voyez la relance, marquez-la payée.</p>
+              <Link href="/register" style={{display: "inline-flex", alignItems: "center", justifyContent: "center", height: "48px", padding: "0 26px", borderRadius: "8px", background: "#0D1B3E", color: "#ffffff", fontWeight: "700", fontSize: "16px", textDecoration: "none"}}>Ouvrir la démo</Link>
+            </div>
+            <div style={{flex: "1 1 380px", minWidth: "0", background: "#F7F5EF", border: "1px solid #E3E0D5", borderRadius: "14px", padding: "28px", display: "flex", flexDirection: "column", gap: "16px"}}>
+              <div style={{display: "flex", justifyContent: "space-between", gap: "12px", flexWrap: "wrap"}}>
+                <div><div style={{fontSize: "12px", fontWeight: "700", letterSpacing: "0.06em", textTransform: "uppercase", color: "#4A5575"}}>Facture</div><div style={{fontWeight: "700"}}>FAC-2026-011</div></div>
+                <span style={{alignSelf: "flex-start", padding: "4px 10px", borderRadius: "6px", background: "#ffffff", border: "1px solid #E3E0D5", color: "#4A5575", fontSize: "12px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.04em"}}>Démo</span>
+              </div>
+              <div style={{fontSize: "14px", color: "#4A5575"}}>[Votre entreprise] → Kossi Design SARL</div>
+              <div style={{display: "flex", justifyContent: "space-between", padding: "12px 0", borderTop: "1px solid #DAD6C8", fontVariantNumeric: "tabular-nums"}}><span>Prestation de conseil</span><span style={{fontWeight: "600"}}>200 000 XOF</span></div>
+              <div style={{display: "flex", justifyContent: "space-between", fontVariantNumeric: "tabular-nums", color: "#4A5575"}}><span>TVA 18 %</span><span>36 000 XOF</span></div>
+              <div style={{display: "flex", justifyContent: "space-between", paddingTop: "12px", borderTop: "2px solid #0D1B3E", fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "22px", fontVariantNumeric: "tabular-nums"}}><span>Total TTC</span><span>236 000 XOF</span></div>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-)}
+        </section>
 
-
-{/* ══════════════════════════════════
-     PRICING
-══════════════════════════════════ */}
-<section className="pricing-sec" id="pricing">
-  <div className="container">
-    <div className="pricing-header">
-      <div className="sec-label">Tarifs</div>
-      <h2 className="sec-title">Simple et transparent — en XOF</h2>
-      <p style={{fontSize: '16px', color: 'var(--pierre)'}}>Commencez gratuitement. Passez au Pro quand vous êtes prêt.</p>
-    </div>
-
-    <div className="pricing-grid">
-
-      {/* Free */}
-      <div className="pc">
-        <div className="pc-name">Gratuit</div>
-        <div className="pc-price">
-          <div className="pc-amount"><span className="pc-currency">XOF</span> 0</div>
-          <div className="pc-period">pour toujours</div>
-        </div>
-        <Link href="/register" className="pc-cta pc-cta--outline">Commencer gratuitement</Link>
-        <div className="pc-div"></div>
-        <ul className="pc-features">
-          <li className="pc-feature"><span className="pc-check">✓</span>5 factures par mois</li>
-          <li className="pc-feature"><span className="pc-check">✓</span>Relances WhatsApp basiques (J+7, J+30)</li>
-          <li className="pc-feature"><span className="pc-check">✓</span>1 intégration Mobile Money</li>
-          <li className="pc-feature"><span className="pc-check">✓</span>PDF de facture professionnel</li>
-          <li className="pc-feature"><span className="pc-cross" style={{color: '#ddd', fontSize: '16px'}}>—</span>Analytics avancés</li>
-          <li className="pc-feature"><span className="pc-cross" style={{color: '#ddd', fontSize: '16px'}}>—</span>Relances personnalisées</li>
-        </ul>
-      </div>
-
-      {/* Pro */}
-      <div className="pc pc--pro">
-        <div className="pc-badge">Le plus populaire</div>
-        <div className="pc-name">Pro</div>
-        <div className="pc-price">
-          <div className="pc-amount"><span className="pc-currency">XOF</span> 9 900</div>
-          <div className="pc-period">par mois · ≈ 15€</div>
-        </div>
-        <Link href="/register" className="pc-cta pc-cta--gold">Essayer 14 jours gratuits</Link>
-        <div className="pc-div"></div>
-        <ul className="pc-features">
-          <li className="pc-feature"><span className="pc-check">✓</span>Factures illimitées</li>
-          <li className="pc-feature"><span className="pc-check">✓</span>Toutes les intégrations Mobile Money</li>
-          <li className="pc-feature"><span className="pc-check">✓</span>Relances personnalisées (J+3, J+7, J+14, J+30)</li>
-          <li className="pc-feature"><span className="pc-check">✓</span>Analytics — encaissé, en attente, en retard</li>
-          <li className="pc-feature"><span className="pc-check">✓</span>Paiement par carte bancaire</li>
-          <li className="pc-feature"><span className="pc-check">✓</span>Support par WhatsApp</li>
-        </ul>
-      </div>
-
-      {/* Business */}
-      <div className="pc">
-        <div className="pc-name">Business</div>
-        <div className="pc-price">
-          <div className="pc-amount"><span className="pc-currency">XOF</span> 24 900</div>
-          <div className="pc-period">par mois · ≈ 38€</div>
-        </div>
-        <Link href="/register" className="pc-cta pc-cta--outline">Contacter l'équipe</Link>
-        <div className="pc-div"></div>
-        <ul className="pc-features">
-          <li className="pc-feature"><span className="pc-check">✓</span>Tout ce qui est inclus dans Pro</li>
-          <li className="pc-feature"><span className="pc-check">✓</span>Jusqu'à 5 utilisateurs</li>
-          <li className="pc-feature"><span className="pc-check">✓</span>Accès API pour intégrations</li>
-          <li className="pc-feature"><span className="pc-check">✓</span>Rapports exportables (Excel, PDF)</li>
-          <li className="pc-feature"><span className="pc-check">✓</span>Support prioritaire dédié</li>
-          <li className="pc-feature"><span className="pc-check">✓</span>Multi-devises XOF + EUR</li>
-        </ul>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-
-{/* ══════════════════════════════════
-     FAQ
-══════════════════════════════════ */}
-<section className="faq-sec" id="faq">
-  <div className="container">
-    <div className="faq-header">
-      <div className="sec-label">Questions fréquentes</div>
-      <h2 className="sec-title">Tout ce que vous voulez savoir</h2>
-    </div>
-    <div className="faq-grid">
-
-      <details>
-        <summary>Mes clients sauront-ils que les relances sont automatiques ?</summary>
-        <div className="faq-body">Non. Chaque message WhatsApp est envoyé depuis votre numéro professionnel et personnalisé avec le prénom du client, le montant exact et le numéro de facture. <strong>Vos clients ont l'impression que vous écrivez vous-même.</strong> C'est ça qui rend Factura efficace sans abîmer la relation client.</div>
-      </details>
-
-      <details>
-        <summary>Quels opérateurs Mobile Money sont disponibles ?</summary>
-        <div className="faq-body">Factura intègre <strong>Orange Money, Wave, MTN MoMo et Moov Money</strong> — couvrant le Sénégal, la Côte d'Ivoire, le Togo, le Bénin, le Mali et le Burkina Faso. Le paiement par <strong>carte bancaire Visa et Mastercard</strong> est également disponible pour vos clients en Europe.</div>
-      </details>
-
-      <details>
-        <summary>Puis-je utiliser Factura si je travaille aussi avec des clients en Europe ?</summary>
-        <div className="faq-body">Oui. Factura supporte les <strong>factures en EUR</strong> et les virements SEPA. Vous pouvez gérer vos clients africains en XOF et vos clients européens en EUR depuis le même tableau de bord, sans friction.</div>
-      </details>
-
-      <details>
-        <summary>Est-ce que mes données financières sont sécurisées ?</summary>
-        <div className="faq-body">Oui. Toutes les données sont <strong>chiffrées en AES-256</strong>, hébergées en Europe (RGPD), avec SSL/TLS sur toutes les communications. Nous ne stockons jamais les informations de paiement de vos clients — elles sont gérées directement par les opérateurs (FedaPay, CinetPay).</div>
-      </details>
-
-      <details>
-        <summary>Que se passe-t-il si je dépasse les 5 factures gratuites ?</summary>
-        <div className="faq-body">Vous recevez une notification et vous pouvez <strong>passer au plan Pro à tout moment</strong>, sans interruption de service. Il n'y a pas de limite surprise — vous décidez en connaissance de cause.</div>
-      </details>
-
-      <details>
-        <summary>Puis-je annuler mon abonnement à tout moment ?</summary>
-        <div className="faq-body">Oui. <strong>Aucun engagement, aucune pénalité.</strong> Vous annulez depuis votre compte en 30 secondes. Vos données restent accessibles en lecture pendant 30 jours après l'annulation.</div>
-      </details>
-
-    </div>
-  </div>
-</section>
-
-
-{/* ══════════════════════════════════
-     FINAL CTA
-══════════════════════════════════ */}
-<section className="cta-sec">
-  <svg className="pat-bg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-    <defs><pattern id="cta-pat" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-      <polygon points="20,1 39,20 20,39 1,20" fill="none" stroke="#fff" strokeWidth=".8" opacity=".25"/>
-      <polygon points="20,9 31,20 20,31 9,20" fill="none" stroke="#E8A020" strokeWidth=".6" opacity=".35"/>
-      <circle cx="20" cy="20" r="1.8" fill="#E8A020" opacity=".4"/>
-      <circle cx="0"  cy="0"  r="1.2" fill="#fff" opacity=".15"/>
-      <circle cx="40" cy="0"  r="1.2" fill="#fff" opacity=".15"/>
-      <circle cx="0"  cy="40" r="1.2" fill="#fff" opacity=".15"/>
-      <circle cx="40" cy="40" r="1.2" fill="#fff" opacity=".15"/>
-    </pattern></defs>
-    <rect width="100%" height="100%" fill="url(#cta-pat)"/>
-  </svg>
-  <div className="cta-inner container">
-    <h2 className="cta-title">
-      Arrêtez de courir<br />après vos <em>paiements.</em>
-    </h2>
-    <p className="cta-sub">Rejoignez 500+ freelances et PME qui encaissent à l'heure — sans effort, sans tension.</p>
-    <Link href="/register" className="cta-btn">
-      Commencer gratuitement
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9h12M10 5l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-    </Link>
-    <div className="cta-trust">Pas de carte bancaire · 5 factures gratuites · Annulation à tout moment</div>
-  </div>
-</section>
-
-
-{/* ══════════════════════════════════
-     FOOTER
-══════════════════════════════════ */}
-<footer className="footer">
-  <div className="container">
-    <div className="footer-top">
-      <div className="footer-brand">
-        <div className="footer-logo"><span className="ff">F</span>actura ✓</div>
-        <p className="footer-tagline">Envoyez la facture. On s'occupe du reste. Fait pour l'Afrique de l'Ouest et l'Europe.</p>
-        <div style={{marginTop: '20px'}}>
-          <div className="footer-countries">
-            <div className="flag-pill">🇸🇳 Sénégal</div>
-            <div className="flag-pill">🇨🇮 Côte d'Ivoire</div>
-            <div className="flag-pill">🇹🇬 Togo</div>
-            <div className="flag-pill">🇧🇯 Bénin</div>
-            <div className="flag-pill">🇲🇱 Mali</div>
-            <div className="flag-pill">🇫🇷 Europe</div>
+        {/* TARIFS */}
+        <section id="tarifs" style={{maxWidth: "1200px", margin: "0 auto", padding: "0 24px 96px", boxSizing: "border-box"}}>
+          <div style={{maxWidth: "720px", marginBottom: "40px"}}>
+            <div style={{fontSize: "13px", fontWeight: "700", letterSpacing: "0.08em", textTransform: "uppercase", color: "#4A5575", marginBottom: "12px"}}>Tarifs</div>
+            <h2 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "clamp(30px,3.6vw,44px)", lineHeight: "1.12", letterSpacing: "-0.02em"}}>Des prix en XOF, affichés en entier.</h2>
           </div>
-        </div>
+          <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "20px", alignItems: "stretch"}}>
+            <article style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "16px", padding: "32px", display: "flex", flexDirection: "column", gap: "16px"}}>
+              <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "22px"}}>Gratuit</h3>
+              <div style={{fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "40px", letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums"}}>0 XOF</div>
+              <p style={{margin: "0", color: "#4A5575"}}>5 factures par mois, tous les mois.</p>
+              <ul style={{margin: "0", padding: "0", listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", flexGrow: "1"}}>
+                <li style={{display: "flex", gap: "10px", alignItems: "flex-start"}}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D1B3E" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{flex: "none", marginTop: "2px"}}><path d="M5 12.5l4.5 4.5L19 7"></path></svg>Factures et clients</li>
+                <li style={{display: "flex", gap: "10px", alignItems: "flex-start"}}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D1B3E" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{flex: "none", marginTop: "2px"}}><path d="M5 12.5l4.5 4.5L19 7"></path></svg>Tableau de bord</li>
+                <li style={{display: "flex", gap: "10px", alignItems: "flex-start"}}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D1B3E" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{flex: "none", marginTop: "2px"}}><path d="M5 12.5l4.5 4.5L19 7"></path></svg>PDF à envoyer vous-même</li>
+              </ul>
+              <Link href="/register" style={{display: "inline-flex", alignItems: "center", justifyContent: "center", height: "48px", borderRadius: "8px", border: "2px solid #0D1B3E", color: "#0D1B3E", fontWeight: "700", textDecoration: "none", boxSizing: "border-box"}}>Commencer gratuitement</Link>
+            </article>
+            <article style={{background: "#0D1B3E", color: "#ffffff", borderRadius: "16px", padding: "32px", display: "flex", flexDirection: "column", gap: "16px", boxShadow: "0 20px 40px -16px rgba(13,27,62,0.5)"}}>
+              <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", gap: "8px"}}>
+                <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "22px"}}>Pro</h3>
+                <span style={{padding: "4px 10px", borderRadius: "999px", background: "#FFCC00", color: "#0D1B3E", fontSize: "12px", fontWeight: "800"}}>Relances incluses</span>
+              </div>
+              <div><span style={{fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "40px", letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums"}}>9 900 XOF</span><span style={{color: "#C9D2EA"}}> /mois</span></div>
+              <p style={{margin: "0", color: "#C9D2EA"}}>Environ 15 € par mois. Relances WhatsApp automatiques.</p>
+              <ul style={{margin: "0", padding: "0", listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", flexGrow: "1"}}>
+                <li style={{display: "flex", gap: "10px", alignItems: "flex-start"}}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFCC00" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{flex: "none", marginTop: "2px"}}><path d="M5 12.5l4.5 4.5L19 7"></path></svg>Factures illimitées</li>
+                <li style={{display: "flex", gap: "10px", alignItems: "flex-start"}}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFCC00" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{flex: "none", marginTop: "2px"}}><path d="M5 12.5l4.5 4.5L19 7"></path></svg>Séquence J+3, J+7, J+14, J+30</li>
+                <li style={{display: "flex", gap: "10px", alignItems: "flex-start"}}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFCC00" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{flex: "none", marginTop: "2px"}}><path d="M5 12.5l4.5 4.5L19 7"></path></svg>Liens de paiement Mobile Money et carte</li>
+              </ul>
+              <Link href="/register" style={{display: "inline-flex", alignItems: "center", justifyContent: "center", height: "48px", borderRadius: "8px", background: "#FFCC00", color: "#0D1B3E", fontWeight: "700", textDecoration: "none"}}>Essayer Pro</Link>
+            </article>
+            <article style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "16px", padding: "32px", display: "flex", flexDirection: "column", gap: "16px"}}>
+              <h3 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "700", fontSize: "22px"}}>Business</h3>
+              <div><span style={{fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "40px", letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums"}}>24 900 XOF</span><span style={{color: "#4A5575"}}> /mois</span></div>
+              <p style={{margin: "0", color: "#4A5575"}}>Environ 38 € par mois. Multi-utilisateurs et API.</p>
+              <ul style={{margin: "0", padding: "0", listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", flexGrow: "1"}}>
+                <li style={{display: "flex", gap: "10px", alignItems: "flex-start"}}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D1B3E" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{flex: "none", marginTop: "2px"}}><path d="M5 12.5l4.5 4.5L19 7"></path></svg>Tout Pro</li>
+                <li style={{display: "flex", gap: "10px", alignItems: "flex-start"}}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D1B3E" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{flex: "none", marginTop: "2px"}}><path d="M5 12.5l4.5 4.5L19 7"></path></svg>Plusieurs utilisateurs</li>
+                <li style={{display: "flex", gap: "10px", alignItems: "flex-start"}}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D1B3E" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{flex: "none", marginTop: "2px"}}><path d="M5 12.5l4.5 4.5L19 7"></path></svg>Accès API</li>
+              </ul>
+              <Link href="/register" style={{display: "inline-flex", alignItems: "center", justifyContent: "center", height: "48px", borderRadius: "8px", border: "2px solid #0D1B3E", color: "#0D1B3E", fontWeight: "700", textDecoration: "none", boxSizing: "border-box"}}>Choisir Business</Link>
+            </article>
+          </div>
+          <p style={{margin: "24px 0 0", color: "#4A5575", fontSize: "15px", maxWidth: "820px"}}>Frais Mobile Money : ceux de votre opérateur. L'abonnement se règle par lien de paiement, à chaque échéance. Il n'y a pas de prélèvement automatique.</p>
+        </section>
+
+        {/* FAQ */}
+        <section id="faq" style={{maxWidth: "860px", margin: "0 auto", padding: "0 24px 96px", boxSizing: "border-box"}}>
+          <h2 style={{margin: "0 0 32px", fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "clamp(30px,3.6vw,44px)", lineHeight: "1.12", letterSpacing: "-0.02em"}}>Questions fréquentes</h2>
+          <div style={{display: "flex", flexDirection: "column", gap: "12px"}}>
+            <details open style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "12px", padding: "20px 24px"}}>
+              <summary className="lp-sum" style={{cursor: "pointer", fontWeight: "700", fontSize: "18px"}}>Faut-il une carte bancaire pour commencer ?</summary>
+              <p style={{margin: "12px 0 0", color: "#4A5575", fontSize: "16px"}}>Non. Le plan Gratuit donne 5 factures par mois, tous les mois, sans carte. Vous pouvez annuler à tout moment.</p>
+            </details>
+            <details style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "12px", padding: "20px 24px"}}>
+              <summary className="lp-sum" style={{cursor: "pointer", fontWeight: "700", fontSize: "18px"}}>L'abonnement est-il prélevé automatiquement ?</summary>
+              <p style={{margin: "12px 0 0", color: "#4A5575", fontSize: "16px"}}>Non. Vous recevez un lien de paiement Mobile Money à chaque échéance. Rien n'est prélevé sans votre action.</p>
+            </details>
+            <details style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "12px", padding: "20px 24px"}}>
+              <summary className="lp-sum" style={{cursor: "pointer", fontWeight: "700", fontSize: "18px"}}>Qui paie les frais Mobile Money ?</summary>
+              <p style={{margin: "12px 0 0", color: "#4A5575", fontSize: "16px"}}>Ce sont les frais de votre opérateur. Ils sont indiqués sur la page Tarifs.</p>
+            </details>
+            <details style={{background: "#ffffff", border: "1px solid #E3E0D5", borderRadius: "12px", padding: "20px 24px"}}>
+              <summary className="lp-sum" style={{cursor: "pointer", fontWeight: "700", fontSize: "18px"}}>Factura est-il terminé ?</summary>
+              <p style={{margin: "12px 0 0", color: "#4A5575", fontSize: "16px"}}>Non. Factura est en bêta et nous construisons en public. Rejoignez la liste d'attente pour tester en avance et nous dire ce qui manque.</p>
+            </details>
+          </div>
+        </section>
+
+        {/* CTA FINAL */}
+        <section style={{background: "#0D1B3E", color: "#ffffff"}}>
+          <div style={{maxWidth: "1200px", margin: "0 auto", padding: "80px 24px", boxSizing: "border-box", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "24px"}}>
+            <h2 style={{margin: "0", fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "clamp(32px,4.2vw,52px)", lineHeight: "1.1", letterSpacing: "-0.02em", maxWidth: "760px", color: "#ffffff"}}>Envoyez la facture. <span style={{color: "#FFCC00"}}>On s'occupe du reste.</span></h2>
+            <div style={{display: "flex", flexWrap: "wrap", gap: "12px", justifyContent: "center"}}>
+              <Link href="/register" style={{display: "inline-flex", alignItems: "center", justifyContent: "center", height: "48px", padding: "0 28px", borderRadius: "8px", background: "#FFCC00", color: "#0D1B3E", fontWeight: "700", fontSize: "16px", textDecoration: "none"}}>Créer ma première facture</Link>
+              <a href="#tarifs" style={{display: "inline-flex", alignItems: "center", justifyContent: "center", height: "48px", padding: "0 28px", borderRadius: "8px", border: "2px solid #ffffff", color: "#ffffff", fontWeight: "600", fontSize: "16px", textDecoration: "none", boxSizing: "border-box"}}>Voir les tarifs</a>
+            </div>
+            <p style={{margin: "0", fontSize: "14px", color: "#C9D2EA"}}>5 factures gratuites par mois · Sans carte · Annulation à tout moment</p>
+          </div>
+        </section>
+
+        {/* PIED DE PAGE */}
+        <footer style={{background: "#08122C", color: "#C9D2EA"}}>
+          <div style={{maxWidth: "1200px", margin: "0 auto", padding: "40px 24px", boxSizing: "border-box", display: "flex", flexWrap: "wrap", gap: "24px 48px", justifyContent: "space-between", alignItems: "flex-start"}}>
+            <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
+              <span style={{fontFamily: "'Outfit',sans-serif", fontWeight: "800", fontSize: "22px", color: "#ffffff"}}>Factura</span>
+              <span style={{fontSize: "14px"}}>© 2026 Factura. Produit en bêta.</span>
+            </div>
+            <nav aria-label="Pied de page" style={{display: "flex", flexWrap: "wrap", gap: "12px 28px", fontSize: "14px"}}>
+              <a href="#" style={{color: "#C9D2EA"}}>Mentions légales</a>
+              <a href="#" style={{color: "#C9D2EA"}}>Confidentialité</a>
+              <a href="#" style={{color: "#C9D2EA"}}>CGV</a>
+              <a href="#" style={{color: "#C9D2EA"}}>Cookies</a>
+              <a href="#" style={{color: "#C9D2EA"}}>Contact : [E-MAIL DE CONTACT]</a>
+            </nav>
+          </div>
+        </footer>
+
       </div>
-
-      <div>
-        <div className="footer-col-title">Produit</div>
-        <ul className="footer-links">
-          <li><a href="#">Fonctionnalités</a></li>
-          <li><a href="#">Tarifs</a></li>
-          <li><a href="#">Intégrations Mobile Money</a></li>
-          <li><a href="#">Modèles de factures</a></li>
-          <li><a href="#">API Développeurs</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <div className="footer-col-title">Ressources</div>
-        <ul className="footer-links">
-          <li><a href="#">Guide de démarrage</a></li>
-          <li><a href="#">Documentation</a></li>
-          <li><a href="#">Blog</a></li>
-          <li><a href="#">Cas clients</a></li>
-          <li><a href="#">FAQ</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <div className="footer-col-title">Entreprise</div>
-        <ul className="footer-links">
-          <li><a href="#">À propos</a></li>
-          <li><a href="#">Contact</a></li>
-          <li><a href="#">WhatsApp Support</a></li>
-          <li><a href="#">Partenaires</a></li>
-          <li><a href="#">Presse</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <div className="footer-bottom">
-      <div className="footer-copy">© 2026 Factura. Tous droits réservés.</div>
-      <div className="footer-legal">
-        <a href="#">Confidentialité</a>
-        <a href="#">Conditions d'utilisation</a>
-        <a href="#">Cookies</a>
-        <a href="#">RGPD</a>
-      </div>
-    </div>
-  </div>
-</footer>
-
-
     </>
   )
 }

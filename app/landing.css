@@ -1,0 +1,12 @@
+/* Styles de la page d'accueil (design bleu nuit et jaune), limités à .lp pour ne pas toucher aux autres pages */
+.lp { font-family: 'Inter', system-ui, sans-serif; background: #F7F5EF; color: #0D1B3E; line-height: 1.5; }
+.lp a { color: #0D1B3E; }
+.lp a:hover { text-decoration: underline; }
+.lp a:focus-visible,
+.lp summary:focus-visible { outline: 3px solid #78B4FF; outline-offset: 2px; box-shadow: 0 0 0 2px #0D1B3E; }
+
+/* La FAQ garde le comportement natif (triangle) : on neutralise les styles globaux de details/summary */
+.lp details { overflow: visible; }
+.lp summary.lp-sum { display: list-item; padding: 0; gap: 0; list-style: revert; justify-content: flex-start; user-select: auto; }
+.lp summary.lp-sum::after { content: none; }
+.lp summary.lp-sum::-webkit-details-marker { display: revert; }
