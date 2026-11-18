@@ -382,9 +382,12 @@ export default function InvoiceDetailPage() {
           </button>
 
           {invoice.status === 'draft' && (
-            <button className="ivd-btn-ghost" disabled={updating} onClick={() => updateStatus('sent')}>
-              Marquer comme envoyée (sans email)
-            </button>
+            <>
+              <a className="ivd-btn-ghost" href={`/invoices/${invoice.id}/edit`}>Modifier le brouillon</a>
+              <button className="ivd-btn-ghost" disabled={updating} onClick={() => updateStatus('sent')}>
+                Marquer comme envoyée (sans email)
+              </button>
+            </>
           )}
           {(displayStatus === 'sent' || displayStatus === 'overdue') && (
             <>

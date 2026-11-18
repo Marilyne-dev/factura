@@ -192,6 +192,7 @@ export default function ClientsPage() {
                 </div>
               </div>
               <div className="cl-card-actions">
+                <a className="cl-icon-btn" href={`/clients/${c.id}`} title="Fiche client" aria-label={`Fiche client ${c.full_name}`}>↗</a>
                 <button className="cl-icon-btn" onClick={() => openEdit(c)} title="Modifier">✏️</button>
                 <button className="cl-icon-btn" onClick={() => { setDeleteTarget(c); setDeleteError('') }} title="Supprimer">🗑️</button>
               </div>

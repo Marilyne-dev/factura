@@ -36,10 +36,16 @@ export default function NewInvoicePage() {
   const [notes, setNotes] = useState('')
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
+  const [usage, setUsage] = useState(null)
 
   const init = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session?.access_token) {
+      const usageResponse = await fetch('/api/account/usage', { headers: { Authorization: `Bearer ${session.access_token}` } })
+      if (usageResponse.ok) setUsage(await usageResponse.json())
+    }
 
     const [{ data: clientList }, { data: company }] = await Promise.all([
       supabase.from('clients').select('id, full_name, company_name').eq('user_id', user.id).order('full_name'),
@@ -79,6 +85,10 @@ export default function NewInvoicePage() {
   const validate = () => getInvoiceDraftError({ clientId, issueDate, dueDate, lines, taxRate })
 
   const handleSave = async (statusToSave) => {
+    if (usage && usage.used >= usage.limit) {
+      setError('Vous avez atteint la limite de 5 nouvelles factures ce mois-ci. Les offres payantes ne sont pas encore disponibles.')
+      return
+    }
     const validationError = validate()
     if (validationError) {
       setError(validationError)
@@ -164,6 +174,8 @@ export default function NewInvoicePage() {
           <p className="ni-subtitle">{invoiceNumber}</p>
         </div>
       </div>
+
+      {usage && <div className="ni-warning">{usage.used} / {usage.limit} nouvelles factures créées ce mois-ci. Les brouillons comptent dans le quota.</div>}
 
       {clients.length === 0 && (
         <div className="ni-warning">
