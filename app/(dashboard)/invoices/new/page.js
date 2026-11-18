@@ -311,7 +311,7 @@ const NEW_INVOICE_CSS = `
 .ni-subtitle { font-family: var(--fm); font-size: 13px; color: var(--pierre); }
 
 .ni-warning {
-  background: var(--gold-lt); color: #8a5c10; border-radius: 10px;
+  background: var(--gold-lt); color: #7A5A00; border-radius: 10px;
   padding: 12px 16px; font-size: 13px; margin-bottom: 20px;
 }
 .ni-warning a { color: var(--forest); font-weight: 700; text-decoration: underline; }

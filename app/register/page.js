@@ -59,8 +59,8 @@ export default function Register() {
         <svg className="pat-bg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" style={{ opacity: '.5' }}>
           <defs><pattern id="auth-pat-register" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
             <polygon points="20,1 39,20 20,39 1,20" fill="none" stroke="#fff" strokeWidth=".7" opacity=".2" />
-            <polygon points="20,9 31,20 20,31 9,20" fill="none" stroke="#E8A020" strokeWidth=".5" opacity=".25" />
-            <circle cx="20" cy="20" r="1.5" fill="#E8A020" opacity=".3" />
+            <polygon points="20,9 31,20 20,31 9,20" fill="none" stroke="#FFCC00" strokeWidth=".5" opacity=".25" />
+            <circle cx="20" cy="20" r="1.5" fill="#FFCC00" opacity=".3" />
           </pattern></defs>
           <rect width="100%" height="100%" fill="url(#auth-pat-register)" />
         </svg>

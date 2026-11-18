@@ -214,7 +214,7 @@ const DASHBOARD_PAGE_CSS = `
 }
 .dp-subtitle { font-size: 14px; color: var(--pierre); }
 .dp-cta {
-  background: var(--v3-primary); color: var(--white);
+  background: var(--v3-primary); color: var(--forest);
   font-weight: 700; font-size: 13.5px;
   border-radius: 10px; padding: 12px 20px;
   white-space: nowrap; transition: filter .15s;
@@ -265,8 +265,8 @@ const DASHBOARD_PAGE_CSS = `
   flex: 1; width: 100%; max-width: 34px; display: flex; align-items: flex-end;
   background: #f1f5f9; border-radius: 6px; overflow: hidden;
 }
-.dp-bar { width: 100%; background: oklch(0.91 0.04 145); border-radius: 6px 6px 0 0; transition: height .3s; }
-.dp-bar.current { background: var(--v3-success); }
+.dp-bar { width: 100%; background: var(--forest); border-radius: 6px 6px 0 0; transition: height .3s; }
+.dp-bar.current { background: var(--gold); box-shadow: inset 0 0 0 2px var(--forest); }
 .dp-bar-label { font-size: 11px; color: var(--pierre); margin-top: 8px; }
 
 .dp-feed { list-style: none; display: flex; flex-direction: column; gap: 14px; }

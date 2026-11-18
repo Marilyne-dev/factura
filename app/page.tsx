@@ -26,7 +26,7 @@ export default function Home() {
       <a href="#hero" className="nav-logo">
         <span className="nf">F</span><span className="nc">actura</span>
         <svg width="18" height="18" viewBox="0 0 22 22" fill="none" style={{marginLeft: '2px'}} xmlns="http://www.w3.org/2000/svg">
-          <path d="M4 11.5L9 16.5L18 6" stroke="#E8A020" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M4 11.5L9 16.5L18 6" stroke="#FFCC00" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </a>
       <ul className="nav-links">
@@ -50,8 +50,8 @@ export default function Home() {
   <svg className="pat-bg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
     <defs><pattern id="hero-pat" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
       <polygon points="20,1 39,20 20,39 1,20" fill="none" stroke="#fff" strokeWidth=".7" opacity=".25" />
-      <polygon points="20,9 31,20 20,31 9,20" fill="none" stroke="#E8A020" strokeWidth=".5" opacity=".3" />
-      <circle cx="20" cy="20" r="1.5" fill="#E8A020" opacity=".35" />
+      <polygon points="20,9 31,20 20,31 9,20" fill="none" stroke="#FFCC00" strokeWidth=".5" opacity=".3" />
+      <circle cx="20" cy="20" r="1.5" fill="#FFCC00" opacity=".35" />
       <circle cx="0" cy="0" r="1.2" fill="#fff" opacity=".15" />
       <circle cx="40" cy="0" r="1.2" fill="#fff" opacity=".15" />
       <circle cx="0" cy="40" r="1.2" fill="#fff" opacity=".15" />
@@ -258,8 +258,8 @@ export default function Home() {
   <svg className="pat-bg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
     <defs><pattern id="cta-pat" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
       <polygon points="20,1 39,20 20,39 1,20" fill="none" stroke="#fff" strokeWidth=".8" opacity=".25" />
-      <polygon points="20,9 31,20 20,31 9,20" fill="none" stroke="#E8A020" strokeWidth=".6" opacity=".35" />
-      <circle cx="20" cy="20" r="1.8" fill="#E8A020" opacity=".4" />
+      <polygon points="20,9 31,20 20,31 9,20" fill="none" stroke="#FFCC00" strokeWidth=".6" opacity=".35" />
+      <circle cx="20" cy="20" r="1.8" fill="#FFCC00" opacity=".4" />
       <circle cx="0" cy="0" r="1.2" fill="#fff" opacity=".15" />
       <circle cx="40" cy="0" r="1.2" fill="#fff" opacity=".15" />
       <circle cx="0" cy="40" r="1.2" fill="#fff" opacity=".15" />

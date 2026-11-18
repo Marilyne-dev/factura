@@ -348,7 +348,7 @@ const CLIENTS_CSS = `
 .cl-empty-text { font-size: 13.5px; color: var(--pierre); max-width: 360px; margin: 0 auto 22px; line-height: 1.6; }
 
 .cl-modal-overlay {
-  position: fixed; inset: 0; background: rgba(10,15,13,.5);
+  position: fixed; inset: 0; background: rgba(7,17,43,.5);
   display: flex; align-items: center; justify-content: center;
   padding: 20px; z-index: 100;
 }

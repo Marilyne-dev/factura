@@ -464,7 +464,7 @@ const INVOICE_DETAIL_CSS = `
 .st-draft { background: var(--brume); color: var(--pierre); }
 .st-sent { background: var(--savane); color: var(--forest); }
 .st-overdue { background: var(--terra-lt); color: var(--terra); }
-.st-paid { background: var(--gold-lt); color: #8a5c10; }
+.st-paid { background: #DDF3E6; color: #1B7A45; }
 .st-cancelled { background: var(--brume); color: var(--pierre); text-decoration: line-through; }
 
 .ivd-actions { display: flex; gap: 10px; }

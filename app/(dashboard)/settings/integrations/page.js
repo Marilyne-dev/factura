@@ -236,7 +236,7 @@ const INTEGRATIONS_CSS = `
 .ig-subtitle { font-size: 14px; color: var(--pierre); max-width: 560px; }
 
 .ig-warning {
-  background: var(--gold-lt); color: #8a5c10; border: 1px solid rgba(232,160,32,.3);
+  background: var(--gold-lt); color: #7A5A00; border: 1px solid rgba(255,204,0,.3);
   border-radius: 10px; padding: 12px 16px; font-size: 12.5px; line-height: 1.5;
   margin-bottom: 20px; max-width: 640px;
 }
