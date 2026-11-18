@@ -20,7 +20,7 @@ export default function ClientsPage() {
     loadClients()
   }, [])
 
-  const loadClients = async () => {
+  async function loadClients() {
     setLoading(true)
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
@@ -124,11 +124,10 @@ export default function ClientsPage() {
       .from('invoices')
       .select('id')
       .eq('client_id', deleteTarget.id)
-      .in('status', ['draft', 'sent', 'overdue'])
       .limit(1)
 
     if (activeInvoices && activeInvoices.length > 0) {
-      setDeleteError('Impossible de supprimer ce client : il a des factures actives liées.')
+      setDeleteError('Impossible de supprimer ce client : des factures lui sont associées. Archivez-les ou supprimez-les d’abord.')
       return
     }
 

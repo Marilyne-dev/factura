@@ -68,7 +68,7 @@ export default function Login() {
             </p>
             <div className="auth-trust">
               <div className="stars">★★★★★</div>
-              <span>500+ freelances et PME actifs en Afrique de l&apos;Ouest</span>
+              <span>Factura est actuellement en bêta.</span>
             </div>
           </div>
           <PhoneMockup />
@@ -109,6 +109,10 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+            </div>
+
+            <div className="auth-switch" style={{ marginTop: -8, marginBottom: 18, textAlign: 'right' }}>
+              <Link href="/forgot-password">Mot de passe oublié ?</Link>
             </div>
 
             <button type="submit" className="auth-submit" disabled={loading}>

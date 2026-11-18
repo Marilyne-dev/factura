@@ -1,8 +1,14 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import {
+  addDaysToDateInputValue,
+  createInvoiceNumber,
+  getInvoiceDraftError,
+  toDateInputValue,
+} from '@/lib/invoice-utils.mjs'
 
 const formatXOF = (amount) =>
   new Intl.NumberFormat('fr-FR').format(Math.round(amount || 0)) + ' XOF'
@@ -14,12 +20,8 @@ const emptyLine = () => ({
   unit_price: 0,
 })
 
-const todayISO = () => new Date().toISOString().split('T')[0]
-const addDaysISO = (days) => {
-  const d = new Date()
-  d.setDate(d.getDate() + days)
-  return d.toISOString().split('T')[0]
-}
+const todayISO = () => toDateInputValue()
+const addDaysISO = (days) => addDaysToDateInputValue(days)
 
 export default function NewInvoicePage() {
   const router = useRouter()
@@ -34,36 +36,31 @@ export default function NewInvoicePage() {
   const [notes, setNotes] = useState('')
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
-  const [companyBankDetails, setCompanyBankDetails] = useState('')
 
-  useEffect(() => {
-    init()
-  }, [])
-
-  const init = async () => {
-    setLoading(true)
+  const init = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    const [{ data: clientList }, { data: company }, { count }] = await Promise.all([
+    const [{ data: clientList }, { data: company }] = await Promise.all([
       supabase.from('clients').select('id, full_name, company_name').eq('user_id', user.id).order('full_name'),
       supabase.from('companies').select('bank_details').eq('user_id', user.id).maybeSingle(),
-      supabase.from('invoices').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
     ])
 
     setClients(clientList || [])
     if (company?.bank_details) {
-      setCompanyBankDetails(company.bank_details)
       setNotes(company.bank_details)
     }
 
     // Numéro auto-incrémenté FAC-2026-001 (US-006)
-    const year = new Date().getFullYear()
-    const nextNum = String((count || 0) + 1).padStart(3, '0')
-    setInvoiceNumber(`FAC-${year}-${nextNum}`)
+    setInvoiceNumber(createInvoiceNumber())
 
     setLoading(false)
-  }
+  }, [])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Starts asynchronous invoice form initialization.
+    void init()
+  }, [init])
 
   const updateLine = (key, field, value) => {
     setLines((prev) => prev.map((l) => (l.key === key ? { ...l, [field]: value } : l)))
@@ -75,16 +72,11 @@ export default function NewInvoicePage() {
     setLines((prev) => (prev.length > 1 ? prev.filter((l) => l.key !== key) : prev))
   }
 
-  const subtotal = lines.reduce((sum, l) => sum + (Number(l.quantity) || 0) * (Number(l.unit_price) || 0), 0)
-  const taxAmount = subtotal * ((Number(taxRate) || 0) / 100)
+  const subtotal = Math.round(lines.reduce((sum, l) => sum + (Number(l.quantity) || 0) * (Number(l.unit_price) || 0), 0))
+  const taxAmount = Math.round(subtotal * ((Number(taxRate) || 0) / 100))
   const total = subtotal + taxAmount
 
-  const validate = () => {
-    if (!clientId) return 'Sélectionnez un client.'
-    if (!dueDate) return "La date d'échéance est obligatoire."
-    if (lines.every((l) => !l.description.trim())) return 'Ajoutez au moins une ligne avec une description.'
-    return ''
-  }
+  const validate = () => getInvoiceDraftError({ clientId, issueDate, dueDate, lines, taxRate })
 
   const handleSave = async (statusToSave) => {
     const validationError = validate()
@@ -96,6 +88,11 @@ export default function NewInvoicePage() {
     setSaving(true)
 
     const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      setSaving(false)
+      setError('Votre session a expiré. Reconnectez-vous.')
+      return
+    }
 
     const { data: invoice, error: invError } = await supabase
       .from('invoices')
@@ -141,10 +138,17 @@ export default function NewInvoicePage() {
     setSaving(false)
 
     if (itemsError) {
-      setError("La facture a été créée mais les lignes n'ont pas pu être enregistrées. Contactez le support.")
+      const { error: cleanupError } = await supabase
+        .from('invoices')
+        .delete()
+        .eq('id', invoice.id)
+        .eq('user_id', user.id)
+      setSaving(false)
+      setError(cleanupError
+        ? 'La facture existe, mais ses lignes n’ont pas été enregistrées. Rechargez avant de continuer.'
+        : 'Les lignes n’ont pas été enregistrées. La facture incomplète a été supprimée; réessayez.')
       return
     }
-
     router.push(`/invoices/${invoice.id}`)
   }
 

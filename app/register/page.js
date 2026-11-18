@@ -18,8 +18,8 @@ export default function Register() {
     e.preventDefault()
     setError('')
 
-    if (password.length < 8) {
-      setError('Le mot de passe doit contenir au moins 8 caractères.')
+    if (password.length < 12) {
+      setError('Le mot de passe doit contenir au moins 12 caractères.')
       return
     }
     if (password !== confirmPassword) {
@@ -31,12 +31,11 @@ export default function Register() {
     const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: { emailRedirectTo: `${window.location.origin}/login` },
     })
     setLoading(false)
 
     if (error) {
-      console.log('Erreur Supabase complète:', error)
-
       if (error.message === 'User already registered') {
         setError('Un compte existe déjà avec cet email.')
       } else if (error.message === 'email rate limit exceeded') {
@@ -76,11 +75,11 @@ export default function Register() {
               Arrêtez de courir<br />après vos <em>paiements.</em>
             </div>
             <p className="auth-subtext">
-              Rejoignez les freelances et PME qui encaissent à l&apos;heure — sans effort, sans tension.
+              Créez votre compte pour essayer Factura pendant la bêta.
             </p>
             <div className="auth-trust">
               <div className="stars">★★★★★</div>
-              <span>5 factures gratuites · Sans carte bancaire</span>
+              <span>Version bêta</span>
             </div>
           </div>
           <PhoneMockup />
@@ -104,7 +103,7 @@ export default function Register() {
           ) : (
             <>
               <div className="auth-card-title">Créer un compte</div>
-              <div className="auth-card-sub">5 factures gratuites, sans carte bancaire.</div>
+              <div className="auth-card-sub">Version bêta — conditions et tarifs à venir.</div>
 
               {error && <div className="auth-error">{error}</div>}
 
@@ -128,7 +127,7 @@ export default function Register() {
                     id="password"
                     type="password"
                     className="auth-input"
-                    placeholder="8 caractères minimum"
+                    placeholder="12 caractères minimum"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required

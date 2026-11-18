@@ -1,13 +1,15 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { formatInvoiceDate, getInvoiceStatus } from '@/lib/invoice-utils.mjs'
 
 const formatXOF = (amount) =>
   new Intl.NumberFormat('fr-FR').format(Math.round(amount || 0)) + ' XOF'
 
-const formatDate = (d) => (d ? new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '—')
+const formatDate = (date) =>
+  formatInvoiceDate(date, { day: 'numeric', month: 'long', year: 'numeric' }) || '—'
 
 const STATUS_LABELS = {
   draft: 'Brouillon',
@@ -25,18 +27,13 @@ export default function PublicInvoicePage() {
   const [company, setCompany] = useState(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+  const displayStatus = getInvoiceStatus(invoice)
   const [generatingPdf, setGeneratingPdf] = useState(false)
   const [pdfError, setPdfError] = useState('')
   const [paying, setPaying] = useState(false)
   const [paymentError, setPaymentError] = useState('')
 
-  useEffect(() => {
-    if (token) load()
-  }, [token])
-
-  const load = async () => {
-    setLoading(true)
-
+  const load = useCallback(async () => {
     const { data: inv, error: invError } = await supabase
       .from('invoices')
       .select('id, invoice_number, status, subtotal, tax_rate, tax_amount, total_amount, issue_date, due_date, notes, user_id, clients(full_name, company_name, email, whatsapp_number)')
@@ -66,7 +63,12 @@ export default function PublicInvoicePage() {
     setItems(lineItems || [])
     setCompany(companyData || null)
     setLoading(false)
-  }
+  }, [token])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Loads public invoice data after its token is available.
+    if (token) void load()
+  }, [token, load])
 
   const handleDownloadPdf = async () => {
     setGeneratingPdf(true)
@@ -104,16 +106,11 @@ export default function PublicInvoicePage() {
     setPaymentError('')
 
     try {
-      const redirectUrl = `${window.location.origin}/pay/${token}`
       const res = await fetch('/api/moneroo/create-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          invoiceNumber: invoice.invoice_number,
-          amount: invoice.total_amount,
-          email: invoice.clients?.email || '',
-          customerName: invoice.clients?.full_name || 'Client',
-          redirectUrl,
+          paymentToken: token,
         }),
       })
 
@@ -154,8 +151,8 @@ export default function PublicInvoicePage() {
     )
   }
 
-  const isPaid = invoice.status === 'paid'
-  const isCancelled = invoice.status === 'cancelled'
+  const isPaid = displayStatus === 'paid'
+  const isCancelled = displayStatus === 'cancelled'
 
   return (
     <div className="pay-wrap">
@@ -176,7 +173,7 @@ export default function PublicInvoicePage() {
 
         {/* Statut + montant */}
         <div className={`pay-status-block ${isPaid ? 'is-paid' : isCancelled ? 'is-cancelled' : ''}`}>
-          <div className="pay-status-label">{STATUS_LABELS[invoice.status] || invoice.status}</div>
+          <div className="pay-status-label">{STATUS_LABELS[displayStatus] || displayStatus}</div>
           <div className="pay-amount">{formatXOF(invoice.total_amount)}</div>
           {!isPaid && !isCancelled && (
             <div className="pay-due">Échéance : {formatDate(invoice.due_date)}</div>
@@ -241,7 +238,7 @@ export default function PublicInvoicePage() {
         </div>
 
         {/* Paiement */}
-        {!isPaid && !isCancelled && (
+        {(displayStatus === 'sent' || displayStatus === 'overdue') && (
           <div className="pay-section">
             <div className="pay-section-title">Comment payer</div>
 

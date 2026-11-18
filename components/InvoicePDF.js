@@ -1,11 +1,12 @@
 "use client"
 
 import { Document, Page, Text, View, Image, StyleSheet } from '@react-pdf/renderer'
+import { formatInvoiceDate, getInvoiceStatus } from '@/lib/invoice-utils.mjs'
 
 const formatXOF = (amount) =>
   new Intl.NumberFormat('fr-FR').format(Math.round(amount || 0)) + ' XOF'
 
-const formatDate = (d) => (d ? new Date(d).toLocaleDateString('fr-FR') : '—')
+const formatDate = (date) => formatInvoiceDate(date) || '—'
 
 const STATUS_LABELS = {
   draft: 'Brouillon',
@@ -16,6 +17,8 @@ const STATUS_LABELS = {
 }
 
 export default function InvoicePDF({ company, invoice, client, items }) {
+  const displayStatus = getInvoiceStatus(invoice)
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -23,7 +26,7 @@ export default function InvoicePDF({ company, invoice, client, items }) {
         <View style={styles.header}>
           <View style={styles.headerLeft}>
             {company?.logo_url ? (
-              <Image src={company.logo_url} style={styles.logo} />
+              <Image src={company.logo_url} style={styles.logo} alt="Logo de l’entreprise" />
             ) : (
               <Text style={styles.companyName}>{company?.name || 'Votre entreprise'}</Text>
             )}
@@ -35,7 +38,7 @@ export default function InvoicePDF({ company, invoice, client, items }) {
           <View style={styles.headerRight}>
             <Text style={styles.invoiceLabel}>FACTURE</Text>
             <Text style={styles.invoiceNumber}>{invoice.invoice_number}</Text>
-            <Text style={styles.statusBadge}>{STATUS_LABELS[invoice.status] || invoice.status}</Text>
+            <Text style={styles.statusBadge}>{STATUS_LABELS[displayStatus] || displayStatus}</Text>
           </View>
         </View>
 

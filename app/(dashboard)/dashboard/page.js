@@ -1,8 +1,9 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { computeDashboardKpis, computeMonthlyInvoiceTotals } from '@/lib/invoice-utils.mjs'
 
 // ─────────────────────────────────────────────
 // Formatage montant en XOF
@@ -28,12 +29,7 @@ export default function DashboardPage() {
   const [activity, setActivity] = useState([])
   const [hasInvoices, setHasInvoices] = useState(true) // false si aucune facture -> état vide
 
-  useEffect(() => {
-    loadDashboard()
-  }, [])
-
-  const loadDashboard = async () => {
-    setLoading(true)
+  const loadDashboard = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
@@ -59,8 +55,8 @@ export default function DashboardPage() {
       }
 
       setHasInvoices(invoices.length > 0)
-      computeKpis(invoices)
-      computeMonthly(invoices)
+      setKpis(computeDashboardKpis(invoices))
+      setMonthlyData(computeMonthlyInvoiceTotals(invoices))
 
       // Journal des relances — table `reminders_log` attendue selon PRD US-013
       const { data: log } = await supabase
@@ -77,55 +73,12 @@ export default function DashboardPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const computeKpis = (invoices) => {
-    const now = new Date()
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-
-    const encaisse = invoices
-      .filter((i) => i.status === 'paid' && i.paid_at && new Date(i.paid_at) >= startOfMonth)
-      .reduce((sum, i) => sum + Number(i.total_amount || 0), 0)
-
-    const attente = invoices
-      .filter((i) => i.status === 'sent')
-      .reduce((sum, i) => sum + Number(i.total_amount || 0), 0)
-
-    const retard = invoices
-      .filter((i) => i.status === 'overdue')
-      .reduce((sum, i) => sum + Number(i.total_amount || 0), 0)
-
-    const last30 = new Date(now)
-    last30.setDate(last30.getDate() - 30)
-    const recentSentOrPaid = invoices.filter(
-      (i) => (i.status === 'paid' || i.status === 'overdue') && new Date(i.created_at) >= last30
-    )
-    const paidOnTime = recentSentOrPaid.filter(
-      (i) => i.status === 'paid' && i.paid_at && i.due_date && new Date(i.paid_at) <= new Date(i.due_date)
-    )
-    const tauxRecouvrement = recentSentOrPaid.length
-      ? Math.round((paidOnTime.length / recentSentOrPaid.length) * 100)
-      : 0
-
-    setKpis({ encaisse, attente, retard, tauxRecouvrement })
-  }
-
-  const computeMonthly = (invoices) => {
-    const now = new Date()
-    const buckets = []
-    for (let i = 5; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-      buckets.push({ year: d.getFullYear(), month: d.getMonth(), total: 0 })
-    }
-    invoices
-      .filter((inv) => inv.status === 'paid' && inv.paid_at)
-      .forEach((inv) => {
-        const d = new Date(inv.paid_at)
-        const bucket = buckets.find((b) => b.year === d.getFullYear() && b.month === d.getMonth())
-        if (bucket) bucket.total += Number(inv.total_amount || 0)
-      })
-    setMonthlyData(buckets)
-  }
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Starts an asynchronous dashboard data load.
+    void loadDashboard()
+  }, [loadDashboard])
 
   const maxMonthly = Math.max(1, ...monthlyData.map((b) => b.total))
 
@@ -261,28 +214,31 @@ const DASHBOARD_PAGE_CSS = `
 }
 .dp-subtitle { font-size: 14px; color: var(--pierre); }
 .dp-cta {
-  background: var(--gold); color: var(--nuit);
+  background: var(--v3-primary); color: var(--white);
   font-weight: 700; font-size: 13.5px;
   border-radius: 10px; padding: 12px 20px;
   white-space: nowrap; transition: filter .15s;
 }
-.dp-cta:hover { filter: brightness(.93); }
+.dp-cta:hover { background: var(--v3-primary-hover); }
 
 .dp-kpis {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
   margin-bottom: 24px;
 }
 .dp-kpi {
-  background: var(--white); border: 1px solid var(--border);
-  border-radius: 16px; padding: 20px;
+  background: var(--white); border: 1px solid var(--v3-border);
+  border-radius: 14px; padding: 22px;
+  box-shadow: 0 1px 2px rgb(15 23 42 / .04);
+  transition: box-shadow .2s ease, transform .2s ease;
 }
+.dp-kpi:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgb(15 23 42 / .07); }
 .dp-kpi-icon {
   width: 34px; height: 34px; border-radius: 9px;
   display: flex; align-items: center; justify-content: center;
   font-size: 15px; margin-bottom: 14px;
 }
 .dp-kpi-icon-gold { background: var(--gold-lt); }
-.dp-kpi-icon-forest { background: var(--savane); }
+.dp-kpi-icon-forest { background: oklch(0.94 0.05 145); }
 .dp-kpi-icon-terra { background: var(--terra-lt); }
 .dp-kpi-label { font-size: 12.5px; color: var(--pierre); margin-bottom: 6px; }
 .dp-kpi-value { font-family: var(--fd); font-size: 20px; font-weight: 700; color: var(--nuit); }
@@ -291,8 +247,9 @@ const DASHBOARD_PAGE_CSS = `
   display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px;
 }
 .dp-panel {
-  background: var(--white); border: 1px solid var(--border);
-  border-radius: 16px; padding: 24px;
+  background: var(--white); border: 1px solid var(--v3-border);
+  border-radius: 14px; padding: 24px;
+  box-shadow: 0 1px 2px rgb(15 23 42 / .04);
 }
 .dp-panel-title {
   font-family: var(--fd); font-size: 14px; font-weight: 700;
@@ -306,10 +263,10 @@ const DASHBOARD_PAGE_CSS = `
 .dp-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; }
 .dp-bar-track {
   flex: 1; width: 100%; max-width: 34px; display: flex; align-items: flex-end;
-  background: var(--brume); border-radius: 6px; overflow: hidden;
+  background: #f1f5f9; border-radius: 6px; overflow: hidden;
 }
-.dp-bar { width: 100%; background: var(--savane); border-radius: 6px 6px 0 0; transition: height .3s; }
-.dp-bar.current { background: var(--gold); }
+.dp-bar { width: 100%; background: oklch(0.91 0.04 145); border-radius: 6px 6px 0 0; transition: height .3s; }
+.dp-bar.current { background: var(--v3-success); }
 .dp-bar-label { font-size: 11px; color: var(--pierre); margin-top: 8px; }
 
 .dp-feed { list-style: none; display: flex; flex-direction: column; gap: 14px; }

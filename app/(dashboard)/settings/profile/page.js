@@ -25,10 +25,11 @@ export default function ProfileSettingsPage() {
   const [userId, setUserId] = useState(null)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability -- Starts the asynchronous profile request.
     loadProfile()
   }, [])
 
-  const loadProfile = async () => {
+  async function loadProfile() {
     setLoading(true)
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return

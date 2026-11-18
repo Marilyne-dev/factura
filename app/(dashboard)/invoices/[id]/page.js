@@ -1,9 +1,10 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { formatInvoiceDate, getInvoiceStatus } from '@/lib/invoice-utils.mjs'
 
 const formatXOF = (amount) =>
   new Intl.NumberFormat('fr-FR').format(Math.round(amount || 0)) + ' XOF'
@@ -40,21 +41,18 @@ export default function InvoiceDetailPage() {
   const [sendingEmail, setSendingEmail] = useState(false)
   const [emailSuccess, setEmailSuccess] = useState(false)
 
-  useEffect(() => {
-    if (id) load()
-  }, [id])
-
-  const load = async () => {
-    setLoading(true)
-    setError('')
-
+  const load = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    if (!user) {
+      setLoading(false)
+      setNotFound(true)
+      return
+    }
 
     const [{ data: inv, error: invError }, { data: companyData }] = await Promise.all([
       supabase
         .from('invoices')
-        .select('id, invoice_number, status, subtotal, tax_rate, tax_amount, total_amount, issue_date, due_date, notes, sent_at, created_at, client_id, payment_token, clients(full_name, company_name, email, whatsapp_number)')
+        .select('id, invoice_number, status, subtotal, tax_rate, tax_amount, total_amount, issue_date, due_date, notes, sent_at, paid_at, created_at, client_id, payment_token, clients(full_name, company_name, email, whatsapp_number)')
         .eq('id', id)
         .eq('user_id', user.id)
         .maybeSingle(),
@@ -81,15 +79,26 @@ export default function InvoiceDetailPage() {
     setCompany(companyData || null)
     setItems(lineItems || [])
     setLoading(false)
-  }
+  }, [id])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Loads the selected invoice after its route ID is available.
+    if (id) void load()
+  }, [id, load])
 
   const updateStatus = async (newStatus) => {
+    if (newStatus === 'paid' && !window.confirm('Confirmez-vous que cette facture a été payée ? La date du jour sera enregistrée.')) return
+    if (newStatus === 'cancelled' && !window.confirm('Confirmez-vous l’annulation de cette facture ?')) return
+
     setUpdating(true)
     setError('')
 
     const payload = { status: newStatus }
     if (newStatus === 'sent' && !invoice.sent_at) {
       payload.sent_at = new Date().toISOString()
+    }
+    if (newStatus === 'paid') {
+      payload.paid_at = invoice.paid_at || new Date().toISOString()
     }
 
     const { error: updError } = await supabase
@@ -131,8 +140,8 @@ export default function InvoiceDetailPage() {
       link.click()
       link.remove()
       URL.revokeObjectURL(url)
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      console.error(error)
       setError('Impossible de générer le PDF. Réessayez.')
     }
     setGeneratingPdf(false)
@@ -149,19 +158,17 @@ export default function InvoiceDetailPage() {
     setEmailSuccess(false)
 
     try {
-      const payUrl = `${window.location.origin}/pay/${invoice.payment_token}`
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error('Votre session a expiré. Reconnectez-vous.')
 
       const res = await fetch('/api/send-invoice', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify({
-          to: invoice.clients.email,
-          clientName: invoice.clients.full_name,
-          invoiceNumber: invoice.invoice_number,
-          totalAmount: invoice.total_amount,
-          dueDate: invoice.due_date,
-          payUrl,
-          companyName: company?.name,
+          invoiceId: invoice.id,
         }),
       })
 
@@ -192,11 +199,29 @@ export default function InvoiceDetailPage() {
 
       setEmailSuccess(true)
       setTimeout(() => setEmailSuccess(false), 4000)
-    } catch (e) {
+    } catch {
       setError("Une erreur est survenue lors de l'envoi.")
     }
 
     setSendingEmail(false)
+  }
+
+  const handleWhatsAppReminder = () => {
+    const phone = String(invoice.clients?.whatsapp_number || '').replace(/\D/g, '').replace(/^00/, '')
+    if (!phone) {
+      setError('Ajoutez un numéro WhatsApp au format international dans la fiche client.')
+      return
+    }
+    if (!invoice.payment_token) {
+      setError('Cette facture ne possède pas de lien de paiement public.')
+      return
+    }
+
+    const firstName = invoice.clients?.full_name?.trim().split(/\s+/)[0] || 'Bonjour'
+    const paymentUrl = new URL(`/pay/${encodeURIComponent(invoice.payment_token)}`, window.location.origin).toString()
+    const message = `Bonjour ${firstName}, petit rappel concernant la facture ${invoice.invoice_number} d’un montant de ${formatXOF(invoice.total_amount)}. Vous pouvez la consulter et la régler en ligne ici : ${paymentUrl}\n\nMerci et bonne journée.`
+    const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
   }
 
   const handleDelete = async () => {
@@ -227,6 +252,8 @@ export default function InvoiceDetailPage() {
     )
   }
 
+  const displayStatus = getInvoiceStatus(invoice)
+
   return (
     <div className="ivd">
       <style>{INVOICE_DETAIL_CSS}</style>
@@ -239,8 +266,8 @@ export default function InvoiceDetailPage() {
         <div>
           <div className="ivd-header-top">
             <h1 className="ivd-title">{invoice.invoice_number}</h1>
-            <span className={`ivd-badge ${STATUS_CLASS[invoice.status]}`}>
-              {STATUS_LABELS[invoice.status] || invoice.status}
+            <span className={`ivd-badge ${STATUS_CLASS[displayStatus]}`}>
+              {STATUS_LABELS[displayStatus] || displayStatus}
             </span>
           </div>
           <p className="ivd-subtitle">
@@ -264,13 +291,13 @@ export default function InvoiceDetailPage() {
           <div>
             <div className="ivd-meta-label">Date d&apos;émission</div>
             <div className="ivd-meta-value">
-              {invoice.issue_date ? new Date(invoice.issue_date).toLocaleDateString('fr-FR') : '—'}
+              {formatInvoiceDate(invoice.issue_date) || '—'}
             </div>
           </div>
           <div>
             <div className="ivd-meta-label">Date d&apos;échéance</div>
             <div className="ivd-meta-value">
-              {invoice.due_date ? new Date(invoice.due_date).toLocaleDateString('fr-FR') : '—'}
+              {formatInvoiceDate(invoice.due_date) || '—'}
             </div>
           </div>
           <div>
@@ -285,6 +312,12 @@ export default function InvoiceDetailPage() {
               <div className="ivd-meta-value">
                 {new Date(invoice.sent_at).toLocaleDateString('fr-FR')}
               </div>
+            </div>
+          )}
+          {invoice.paid_at && (
+            <div>
+              <div className="ivd-meta-label">Payée le</div>
+              <div className="ivd-meta-value">{formatInvoiceDate(invoice.paid_at) || '—'}</div>
             </div>
           )}
         </div>
@@ -353,12 +386,22 @@ export default function InvoiceDetailPage() {
               Marquer comme envoyée (sans email)
             </button>
           )}
-          {(invoice.status === 'sent' || invoice.status === 'overdue') && (
-            <button className="ivd-btn-primary" disabled={updating} onClick={() => updateStatus('paid')}>
-              Marquer comme payée
-            </button>
+          {(displayStatus === 'sent' || displayStatus === 'overdue') && (
+            <>
+              <button
+                className="ivd-btn-whatsapp"
+                disabled={!invoice.clients?.whatsapp_number || !invoice.payment_token}
+                onClick={handleWhatsAppReminder}
+                title={!invoice.clients?.whatsapp_number ? 'Ajoutez un numéro WhatsApp au client' : ''}
+              >
+                💬 Préparer un rappel WhatsApp
+              </button>
+              <button className="ivd-btn-primary" disabled={updating} onClick={() => updateStatus('paid')}>
+                Marquer comme payée
+              </button>
+            </>
           )}
-          {invoice.status !== 'cancelled' && invoice.status !== 'paid' && (
+          {displayStatus !== 'cancelled' && displayStatus !== 'paid' && (
             <button className="ivd-btn-ghost" disabled={updating} onClick={() => updateStatus('cancelled')}>
               Annuler la facture
             </button>
@@ -381,7 +424,7 @@ export default function InvoiceDetailPage() {
           )}
         </div>
         <p className="ivd-hint">
-          L&apos;envoi WhatsApp sera branché à une étape suivante (validation Meta requise).
+          WhatsApp s&apos;ouvre avec un message prérempli et le lien de paiement. Vérifiez-le puis envoyez-le depuis WhatsApp.
         </p>
       </div>
     </div>
@@ -394,6 +437,16 @@ const INVOICE_DETAIL_CSS = `
 .ivd-topbar { margin-bottom: 16px; }
 .ivd-back { font-size: 13px; color: var(--pierre); font-weight: 600; }
 .ivd-back:hover { color: var(--forest); }
+
+.ivd-btn-whatsapp {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: 1px solid oklch(0.86 0.08 145); border-radius: 10px;
+  background: oklch(0.95 0.045 145); color: oklch(0.38 0.12 145);
+  padding: 11px 16px; font: 600 13px var(--fb); cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+}
+.ivd-btn-whatsapp:hover:not(:disabled) { background: oklch(0.91 0.07 145); border-color: oklch(0.75 0.12 145); }
+.ivd-btn-whatsapp:disabled { cursor: not-allowed; opacity: .55; }
 
 .ivd-header {
   display: flex; align-items: flex-start; justify-content: space-between;

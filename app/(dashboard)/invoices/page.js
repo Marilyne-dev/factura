@@ -1,8 +1,9 @@
 "use client"
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { formatInvoiceDate, getInvoiceStatus } from '@/lib/invoice-utils.mjs'
 
 const formatXOF = (amount) =>
   new Intl.NumberFormat('fr-FR').format(Math.round(amount || 0)) + ' XOF'
@@ -37,14 +38,12 @@ export default function InvoicesPage() {
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
 
-  useEffect(() => {
-    loadInvoices()
-  }, [])
-
-  const loadInvoices = async () => {
-    setLoading(true)
+  const loadInvoices = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    if (!user) {
+      setLoading(false)
+      return
+    }
 
     // Jointure avec clients pour afficher le nom sans requête séparée
     const { data, error } = await supabase
@@ -55,11 +54,16 @@ export default function InvoicesPage() {
 
     if (!error) setInvoices(data || [])
     setLoading(false)
-  }
+  }, [])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Starts an asynchronous invoice list request.
+    void loadInvoices()
+  }, [loadInvoices])
 
   const filtered = useMemo(() => {
     let list = invoices
-    if (filter !== 'all') list = list.filter((i) => i.status === filter)
+    if (filter !== 'all') list = list.filter((i) => getInvoiceStatus(i) === filter)
     const q = search.trim().toLowerCase()
     if (q) {
       list = list.filter(
@@ -74,7 +78,10 @@ export default function InvoicesPage() {
 
   const counts = useMemo(() => {
     const c = { all: invoices.length, draft: 0, sent: 0, overdue: 0, paid: 0 }
-    invoices.forEach((i) => { if (c[i.status] !== undefined) c[i.status]++ })
+    invoices.forEach((invoice) => {
+      const status = getInvoiceStatus(invoice)
+      if (c[status] !== undefined) c[status]++
+    })
     return c
   }, [invoices])
 
@@ -138,23 +145,26 @@ export default function InvoicesPage() {
             <div className="iv-col-amount">Montant</div>
             <div className="iv-col-status">Statut</div>
           </div>
-          {filtered.map((inv) => (
-            <Link href={`/invoices/${inv.id}`} className="iv-row" key={inv.id}>
-              <div className="iv-col-num iv-num">{inv.invoice_number}</div>
-              <div className="iv-col-client">
-                {inv.clients?.full_name || <span className="iv-muted">Client supprimé</span>}
-              </div>
-              <div className="iv-col-date">
-                {inv.due_date ? new Date(inv.due_date).toLocaleDateString('fr-FR') : '—'}
-              </div>
-              <div className="iv-col-amount">{formatXOF(inv.total_amount)}</div>
-              <div className="iv-col-status">
-                <span className={`iv-badge ${STATUS_CLASS[inv.status]}`}>
-                  {STATUS_LABELS[inv.status] || inv.status}
-                </span>
-              </div>
-            </Link>
-          ))}
+          {filtered.map((inv) => {
+            const status = getInvoiceStatus(inv)
+            return (
+              <Link href={`/invoices/${inv.id}`} className="iv-row" key={inv.id}>
+                <div className="iv-col-num iv-num">{inv.invoice_number}</div>
+                <div className="iv-col-client">
+                  {inv.clients?.full_name || <span className="iv-muted">Client supprimé</span>}
+                </div>
+                <div className="iv-col-date">
+                  {formatInvoiceDate(inv.due_date) || '—'}
+                </div>
+                <div className="iv-col-amount">{formatXOF(inv.total_amount)}</div>
+                <div className="iv-col-status">
+                  <span className={`iv-badge ${STATUS_CLASS[status]}`}>
+                    {STATUS_LABELS[status] || status}
+                  </span>
+                </div>
+              </Link>
+            )
+          })}
         </div>
       )}
     </div>

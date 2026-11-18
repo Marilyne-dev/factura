@@ -1,10 +1,9 @@
 import './globals.css'
 
 export const metadata = {
-  title: "Factura — Vos factures, payées à l'heure",
-  description: "Factura relance vos clients impayés via WhatsApp et encaisse en Mobile Money — automatiquement. Fait pour l'Afrique de l'Ouest et l'Europe.",
+  title: 'Factura — Créez et suivez vos factures en XOF',
+  description: 'Créez vos factures en XOF, envoyez-les par e-mail et suivez les paiements avec Factura, actuellement en bêta.',
 }
-
 export default function RootLayout({ children }) {
   return (
     <html lang="fr">

@@ -18,6 +18,8 @@ const emptyForm = {
 
 export default function IntegrationsPage() {
   const [form, setForm] = useState(emptyForm)
+  const [secretState, setSecretState] = useState({})
+  const [hasLegacySecrets, setHasLegacySecrets] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -27,18 +29,24 @@ export default function IntegrationsPage() {
     loadSettings()
   }, [])
 
-  const loadSettings = async () => {
+  async function loadSettings() {
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-
-    const { data } = await supabase
-      .from('integration_settings')
-      .select('*')
-      .eq('user_id', user.id)
-      .maybeSingle()
-
-    if (data) setForm({ ...emptyForm, ...data })
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      setError('Votre session a expiré. Reconnectez-vous.')
+      setLoading(false)
+      return
+    }
+    const response = await fetch('/api/integrations', {
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    })
+    const result = await response.json().catch(() => ({}))
+    if (!response.ok) setError(result.error || 'Impossible de charger les intégrations.')
+    else {
+      setForm({ ...emptyForm, ...result.settings })
+      setSecretState(result.secrets || {})
+      setHasLegacySecrets(Object.values(result.secrets || {}).some((secret) => secret.legacy))
+    }
     setLoading(false)
   }
 
@@ -48,19 +56,34 @@ export default function IntegrationsPage() {
     setSuccess(false)
     setSaving(true)
 
-    const { data: { user } } = await supabase.auth.getUser()
-
-    const { error: upsertError } = await supabase
-      .from('integration_settings')
-      .upsert({ ...form, user_id: user.id }, { onConflict: 'user_id' })
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      setSaving(false)
+      setError('Votre session a expiré. Reconnectez-vous.')
+      return
+    }
+    const response = await fetch('/api/integrations', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify(form),
+    })
+    const result = await response.json().catch(() => ({}))
 
     setSaving(false)
 
-    if (upsertError) {
-      setError("Une erreur est survenue lors de l'enregistrement. Réessayez.")
+    if (!response.ok) {
+      setError(result.error || 'Impossible d’enregistrer les intégrations.')
       return
     }
 
+    setForm((current) => ({
+      ...current,
+      ...Object.fromEntries(Object.keys(emptyForm).filter((key) => key.endsWith('_encrypted')).map((key) => [key, ''])),
+    }))
+    await loadSettings()
     setSuccess(true)
     setTimeout(() => setSuccess(false), 3000)
   }
@@ -81,10 +104,9 @@ export default function IntegrationsPage() {
       </div>
 
       <div className="ig-warning">
-        ⚠️ Ces clés donnent accès à vos comptes de paiement et de messagerie. Ne les partagez avec personne.
-        Pour la mise en production, elles doivent être chiffrées côté serveur avant stockage — cette page les envoie actuellement telles quelles à Supabase.
+        Les clés secrètes sont chiffrées côté serveur avant stockage et ne sont jamais renvoyées à cette page.
+        {hasLegacySecrets && ' Certaines anciennes clés ne sont pas chiffrées : configurez le chiffrement serveur et remplacez-les.'}
       </div>
-
       {error && <div className="ig-error">{error}</div>}
       {success && <div className="ig-success">✓ Intégrations enregistrées avec succès.</div>}
 
@@ -119,7 +141,7 @@ export default function IntegrationsPage() {
               </div>
               <div className="ig-field">
                 <label className="ig-label">Clé API secrète</label>
-                <input type="password" className="ig-input" value={form.fedapay_secret_key_encrypted || ''} onChange={update('fedapay_secret_key_encrypted')} placeholder="sk_live_..." />
+                <input type="password" className="ig-input" autoComplete="new-password" value={form.fedapay_secret_key_encrypted || ''} onChange={update('fedapay_secret_key_encrypted')} placeholder={secretState.fedapay_secret_key_encrypted?.saved ? 'Clé enregistrée, saisissez pour la remplacer' : 'sk_live_...'} />
               </div>
             </div>
           )}
@@ -132,7 +154,7 @@ export default function IntegrationsPage() {
               </div>
               <div className="ig-field">
                 <label className="ig-label">Clé API</label>
-                <input type="password" className="ig-input" value={form.cinetpay_api_key_encrypted || ''} onChange={update('cinetpay_api_key_encrypted')} placeholder="..." />
+                <input type="password" className="ig-input" autoComplete="new-password" value={form.cinetpay_api_key_encrypted || ''} onChange={update('cinetpay_api_key_encrypted')} placeholder={secretState.cinetpay_api_key_encrypted?.saved ? 'Clé enregistrée, saisissez pour la remplacer' : '...'} />
               </div>
             </div>
           )}
@@ -174,7 +196,7 @@ export default function IntegrationsPage() {
               </div>
               <div className="ig-field">
                 <label className="ig-label">Auth Token</label>
-                <input type="password" className="ig-input" value={form.twilio_auth_token_encrypted || ''} onChange={update('twilio_auth_token_encrypted')} placeholder="..." />
+                <input type="password" className="ig-input" autoComplete="new-password" value={form.twilio_auth_token_encrypted || ''} onChange={update('twilio_auth_token_encrypted')} placeholder={secretState.twilio_auth_token_encrypted?.saved ? 'Clé enregistrée, saisissez pour la remplacer' : '...'} />
               </div>
               <div className="ig-field">
                 <label className="ig-label">Numéro WhatsApp Business</label>
@@ -187,7 +209,7 @@ export default function IntegrationsPage() {
             <div className="ig-subfields">
               <div className="ig-field">
                 <label className="ig-label">API Key</label>
-                <input type="password" className="ig-input" value={form.termii_api_key_encrypted || ''} onChange={update('termii_api_key_encrypted')} placeholder="..." />
+                <input type="password" className="ig-input" autoComplete="new-password" value={form.termii_api_key_encrypted || ''} onChange={update('termii_api_key_encrypted')} placeholder={secretState.termii_api_key_encrypted?.saved ? 'Clé enregistrée, saisissez pour la remplacer' : '...'} />
               </div>
             </div>
           )}

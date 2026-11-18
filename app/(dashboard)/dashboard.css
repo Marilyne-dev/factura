@@ -40,9 +40,13 @@
 .dash-shell {
   display: flex;
   min-height: 100vh;
-  background: var(--brume);
+  background: #f8fafc;
   font-family: var(--fb);
   color: var(--nuit);
+  --v3-primary: oklch(0.55 0.25 260);
+  --v3-primary-hover: oklch(0.48 0.23 260);
+  --v3-success: oklch(0.55 0.16 145);
+  --v3-border: #e2e8f0;
 }
 
 /* ════════════════════════════════════
@@ -51,7 +55,7 @@
 .dash-sidebar {
   width: 260px;
   flex-shrink: 0;
-  background: var(--forest);
+  background: #111827;
   color: var(--white);
   display: flex;
   flex-direction: column;
@@ -88,8 +92,8 @@
   color: var(--white);
 }
 .dash-nav-item.active {
-  background: rgba(232,160,32,.14);
-  color: var(--gold);
+  background: var(--v3-primary);
+  color: var(--white);
   font-weight: 600;
 }
 .dash-nav-icon { font-size: 16px; width: 20px; text-align: center; }
@@ -102,15 +106,15 @@
 .dash-cta {
   display: block;
   text-align: center;
-  background: var(--gold);
-  color: var(--nuit);
+  background: var(--v3-primary);
+  color: var(--white);
   font-weight: 700;
   font-size: 13.5px;
   border-radius: 10px;
   padding: 12px;
   transition: filter .15s;
 }
-.dash-cta:hover { filter: brightness(.93); }
+.dash-cta:hover { background: var(--v3-primary-hover); }
 
 .dash-user {
   display: flex; align-items: center; gap: 10px;
@@ -119,8 +123,8 @@
 }
 .dash-user-avatar {
   width: 34px; height: 34px; border-radius: 50%;
-  background: rgba(232,160,32,.2);
-  color: var(--gold);
+  background: rgba(255,255,255,.12);
+  color: var(--white);
   display: flex; align-items: center; justify-content: center;
   font-family: var(--fd); font-weight: 700; font-size: 13px;
   flex-shrink: 0;
@@ -146,7 +150,7 @@
   align-items: center;
   gap: 12px;
   padding: 14px 20px;
-  background: var(--forest);
+  background: #111827;
   color: var(--white);
   position: sticky; top: 0; z-index: 40;
 }
