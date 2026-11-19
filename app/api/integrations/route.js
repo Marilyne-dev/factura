@@ -1,6 +1,7 @@
 import { createCipheriv, randomBytes } from 'node:crypto'
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { consumeRateLimit } from '@/lib/rate-limit'
 
 const SECRET_FIELDS = [
   'fedapay_secret_key_encrypted',
@@ -63,6 +64,13 @@ export async function GET(request) {
 export async function PUT(request) {
   const auth = await getUser(request)
   if (auth.error) return NextResponse.json({ error: auth.error }, { status: auth.status })
+  try {
+    if (!await consumeRateLimit('integration-update', auth.user.id, 20, 600)) {
+      return NextResponse.json({ error: 'Trop de modifications. Réessayez dans quelques minutes.' }, { status: 429 })
+    }
+  } catch {
+    return NextResponse.json({ error: 'Service de sécurité indisponible. Réessayez plus tard.' }, { status: 503 })
+  }
   const key = getEncryptionKey()
   if (!key) {
     return NextResponse.json({ error: 'Le chiffrement des intégrations doit être configuré sur le serveur.' }, { status: 503 })

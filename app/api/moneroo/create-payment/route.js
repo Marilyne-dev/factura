@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { consumeRateLimit } from '@/lib/rate-limit'
 
 export async function POST(request) {
   try {
@@ -19,6 +20,12 @@ export async function POST(request) {
 
     if (typeof paymentToken !== 'string' || paymentToken.length < 20 || paymentToken.length > 200) {
       return NextResponse.json({ error: 'Lien de paiement invalide.' }, { status: 400 })
+    }
+    try {
+      const allowed = await consumeRateLimit('payment-init', paymentToken, 10, 600)
+      if (!allowed) return NextResponse.json({ error: 'Trop de tentatives. Réessayez dans quelques minutes.' }, { status: 429 })
+    } catch {
+      return NextResponse.json({ error: 'Service de sécurité indisponible. Réessayez plus tard.' }, { status: 503 })
     }
 
     const { data: invoice, error: invoiceError } = await supabaseAdmin

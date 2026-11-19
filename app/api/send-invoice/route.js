@@ -2,6 +2,7 @@ import { Resend } from 'resend'
 import { NextResponse } from 'next/server'
 import { formatInvoiceDate } from '@/lib/invoice-utils.mjs'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { consumeRateLimit } from '@/lib/rate-limit'
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, (character) => ({
@@ -23,6 +24,13 @@ export async function POST(request) {
     const { data: authData, error: authError } = await supabaseAdmin.auth.getUser(accessToken)
     if (authError || !authData.user) {
       return NextResponse.json({ error: 'Session invalide. Reconnectez-vous.' }, { status: 401 })
+    }
+    try {
+      if (!await consumeRateLimit('send-invoice', authData.user.id, 10, 3600)) {
+        return NextResponse.json({ error: 'Limite d’envoi atteinte. Réessayez plus tard.' }, { status: 429 })
+      }
+    } catch {
+      return NextResponse.json({ error: 'Service de sécurité indisponible. Réessayez plus tard.' }, { status: 503 })
     }
 
     const body = await request.json()

@@ -18,7 +18,7 @@ export default function LegalPage({ title, children }) {
   return (
     <main className="legal-page">
       <style>{LEGAL_CSS}</style>
-      <nav><a href="/">Factura</a><a href="/contact">Contact</a></nav>
+      <nav><Link href="/">Factura</Link><Link href="/contact">Contact</Link></nav>
       <article>
         <p className="legal-eyebrow">Factura · Bêta</p>
         <h1>{title}</h1>
@@ -34,3 +34,5 @@ const LEGAL_CSS = `
 .legal-page { min-height:100vh; padding:28px 20px 64px; background:var(--brume); color:var(--nuit); font-family:var(--fb); }.legal-page nav { max-width:860px; margin:0 auto 30px; display:flex; justify-content:space-between; }.legal-page nav a { color:var(--forest); font-weight:700; text-decoration:none; }.legal-page article { max-width:860px; margin:0 auto; padding:36px; border:1px solid var(--border); border-radius:16px; background:white; }.legal-eyebrow { color:var(--pierre); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; }.legal-page h1 { margin:8px 0 26px; font-size:32px; }.legal-page h2 { margin:28px 0 10px; font-size:19px; }.legal-page p,.legal-page li { color:#30384b; font-size:15px; line-height:1.75; }.legal-page a { color:var(--forest); }.legal-alert { margin:18px 0; padding:14px 16px; border:1px solid #e6b850; border-radius:9px; background:#fff7d6; color:#604900; line-height:1.6; }.legal-page footer { margin-top:40px; border-top:1px solid var(--border); padding-top:18px; color:var(--pierre); font-size:12px; }
 @media(max-width:600px) { .legal-page { padding:18px 12px 40px; }.legal-page article { padding:22px 18px; }.legal-page h1 { font-size:26px; } }
 `
+import Link from 'next/link'
+

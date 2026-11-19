@@ -1,8 +1,8 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'Factura — Créez et suivez vos factures en XOF',
-  description: 'Factura crée vos factures, relance vos clients sur WhatsApp, et vous fait encaisser en Mobile Money.',
+  title: { default: 'Factura — Facturation en XOF', template: '%s | Factura' },
+  description: 'Créez, envoyez et suivez vos factures en XOF. Rappels manuels et paiements en ligne selon la configuration du compte.',
 }
 export default function RootLayout({ children }) {
   return (

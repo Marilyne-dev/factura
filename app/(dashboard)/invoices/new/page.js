@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import {
   addDaysToDateInputValue,
@@ -104,27 +105,32 @@ export default function NewInvoicePage() {
       return
     }
 
-    const { data: invoice, error: invError } = await supabase
-      .from('invoices')
-      .insert({
-        user_id: user.id,
-        client_id: clientId,
-        invoice_number: invoiceNumber,
-        status: statusToSave,
-        issue_date: issueDate,
-        due_date: dueDate,
-        subtotal,
-        tax_rate: taxRate || 0,
-        tax_amount: taxAmount,
-        total_amount: total,
-        notes: notes || null,
-        sent_at: statusToSave === 'sent' ? new Date().toISOString() : null,
-      })
-      .select()
-      .single()
+    const { data: invoice, error: invError } = await supabase.rpc('create_invoice_with_items', {
+      p_client_id: clientId,
+      p_invoice_number: invoiceNumber,
+      p_issue_date: issueDate,
+      p_due_date: dueDate,
+      p_tax_rate: Number(taxRate) || 0,
+      p_notes: notes || null,
+      p_status: statusToSave,
+      p_items: lines.filter((line) => line.description.trim()).map((line, position) => ({
+        description: line.description.trim(),
+        quantity: Number(line.quantity),
+        unit_price: Number(line.unit_price),
+        position,
+      })),
+    })
 
     if (invError) {
       setSaving(false)
+      if (String(invError.message || '').includes('FREE_MONTHLY_QUOTA_REACHED')) {
+        setError('Limite mensuelle atteinte : 5 nouvelles factures.')
+        return
+      }
+      if (String(invError.message || '').includes('create_invoice_with_items')) {
+        setError('La migration de la base doit être appliquée avant de créer une facture.')
+        return
+      }
       setError(
         invError.code === '23505'
           ? 'Ce numéro de facture existe déjà. Rechargez la page pour en générer un nouveau.'
@@ -133,17 +139,7 @@ export default function NewInvoicePage() {
       return
     }
 
-    const itemsPayload = lines
-      .filter((l) => l.description.trim())
-      .map((l, idx) => ({
-        invoice_id: invoice.id,
-        description: l.description.trim(),
-        quantity: Number(l.quantity) || 0,
-        unit_price: Number(l.unit_price) || 0,
-        position: idx,
-      }))
-
-    const { error: itemsError } = await supabase.from('invoice_items').insert(itemsPayload)
+    const itemsError = null
 
     setSaving(false)
 
@@ -159,7 +155,12 @@ export default function NewInvoicePage() {
         : 'Les lignes n’ont pas été enregistrées. La facture incomplète a été supprimée; réessayez.')
       return
     }
-    router.push(`/invoices/${invoice.id}`)
+    const invoiceId = Array.isArray(invoice) ? invoice[0]?.id : invoice?.id
+    if (!invoiceId) {
+      setError('La facture a été créée, mais son identifiant n’a pas été renvoyé. Consultez la liste des factures.')
+      return
+    }
+    router.push(`/invoices/${invoiceId}`)
   }
 
   if (loading) return <div className="ni-loading">Chargement...</div>
@@ -179,7 +180,7 @@ export default function NewInvoicePage() {
 
       {clients.length === 0 && (
         <div className="ni-warning">
-          Vous n&apos;avez encore aucun client. <a href="/clients">Ajoutez-en un</a> avant de créer une facture.
+          Vous n&apos;avez encore aucun client. <Link href="/clients">Ajoutez-en un</Link> avant de créer une facture.
         </div>
       )}
 
@@ -310,7 +311,7 @@ export default function NewInvoicePage() {
         </button>
       </div>
       <p className="ni-hint">
-        L&apos;envoi automatique par WhatsApp/Email et la génération PDF seront branchés à l&apos;étape suivante — pour l&apos;instant cette action enregistre la facture et change son statut.
+        « Enregistrer et marquer envoyée » ne transmet pas la facture au client. Utilisez les actions disponibles sur la fiche de facture pour télécharger le PDF ou envoyer un e-mail.
       </p>
     </div>
   )
